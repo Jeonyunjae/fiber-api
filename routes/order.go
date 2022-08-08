@@ -8,14 +8,8 @@ import (
 	"github.com/jeonyunjae/fiber-api/models"
 )
 
-type Order struct {
-	ID      uint    `json:"id"`
-	User    User    `json:"user"`
-	Product Product `json:"product"`
-}
-
-func CreateResponseOrder(order models.Order, user User, product Product) Order {
-	return Order{ID: order.ID, User: user, Product: product}
+func CreateResponseOrder(order models.Order, user models.User, product models.Product) models.Order {
+	return models.Order{ID: order.ID, User: user, Product: product}
 }
 
 func CreateOrder(c *fiber.Ctx) error {
@@ -27,13 +21,13 @@ func CreateOrder(c *fiber.Ctx) error {
 
 	var user models.User
 
-	if err := findUser(order.UserRefer, &user); err != nil {
+	if err := FindUser(order.UserRefer, &user); err != nil {
 		return c.Status(400).JSON(err.Error())
 	}
 
 	var product models.Product
 
-	if err := findProduct(order.ProductRefer, &product); err != nil {
+	if err := FindProduct(order.ProductRefer, &product); err != nil {
 		return c.Status(400).JSON(err.Error())
 	}
 
@@ -49,7 +43,7 @@ func CreateOrder(c *fiber.Ctx) error {
 func GetOrders(c *fiber.Ctx) error {
 	orders := []models.Order{}
 	database.Database.Db.Find(&orders)
-	responseOrders := []Order{}
+	responseOrders := []models.Order{}
 
 	for _, order := range orders {
 		var user models.User

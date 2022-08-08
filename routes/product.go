@@ -8,15 +8,8 @@ import (
 	"github.com/jeonyunjae/fiber-api/models"
 )
 
-type Product struct {
-	// This is not the model, more like a serializer
-	ID           uint   `json:"id"`
-	Name         string `json:"name"`
-	SerialNumber string `json:"serial_number"`
-}
-
-func CreateResponseProduct(product models.Product) Product {
-	return Product{ID: product.ID, Name: product.Name, SerialNumber: product.SerialNumber}
+func CreateResponseProduct(product models.Product) models.Product {
+	return models.Product{ID: product.ID, Name: product.Name, SerialNumber: product.SerialNumber}
 }
 
 func CreateProduct(c *fiber.Ctx) error {
@@ -34,7 +27,7 @@ func CreateProduct(c *fiber.Ctx) error {
 func GetProducts(c *fiber.Ctx) error {
 	products := []models.Product{}
 	database.Database.Db.Find(&products)
-	responseProducts := []Product{}
+	responseProducts := []models.Product{}
 	for _, product := range products {
 		responseProduct := CreateResponseProduct(product)
 		responseProducts = append(responseProducts, responseProduct)
@@ -43,7 +36,7 @@ func GetProducts(c *fiber.Ctx) error {
 	return c.Status(200).JSON(responseProducts)
 }
 
-func findProduct(id int, product *models.Product) error {
+func FindProduct(id int, product *models.Product) error {
 	database.Database.Db.Find(&product, "id = ?", id)
 	if product.ID == 0 {
 		return errors.New("product does not exist")
@@ -60,7 +53,7 @@ func GetProduct(c *fiber.Ctx) error {
 		return c.Status(400).JSON("Please ensure that :id is an integer")
 	}
 
-	if err := findProduct(id, &product); err != nil {
+	if err := FindProduct(id, &product); err != nil {
 		return c.Status(400).JSON(err.Error())
 	}
 
@@ -78,7 +71,7 @@ func UpdateProduct(c *fiber.Ctx) error {
 		return c.Status(400).JSON("Please ensure that :id is an integer")
 	}
 
-	err = findProduct(id, &product)
+	err = FindProduct(id, &product)
 
 	if err != nil {
 		return c.Status(400).JSON(err.Error())

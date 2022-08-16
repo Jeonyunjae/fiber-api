@@ -27,12 +27,12 @@ func (ULKDT *ULKDTree) PositionAddressInfosInit() ULKDTree {
 func (ULKDT *ULKDTree) PositionAddressInfoArrayToKDTree(data [][]string) ULKDTree {
 	for _, row := range data {
 		var PositionAddressInfo models.PositionAddressInfo
-		PositionAddressInfo.ID, _ = strconv.ParseUint(row[0], 10, 32)
-		PositionAddressInfo.Lat, _ = strconv.ParseFloat(row[2], 64)
-		PositionAddressInfo.Lon, _ = strconv.ParseFloat(row[3], 64)
+		PositionAddressInfo.UserCode, _ = strconv.ParseUint(row[0], 10, 32)
+		PositionAddressInfo.LocLatitude, _ = strconv.ParseFloat(row[2], 64)
+		PositionAddressInfo.LocLongtitue, _ = strconv.ParseFloat(row[3], 64)
 		ULKDT.PositionAddressInfoKdTree.Insert(
 			points.NewPoint(
-				[]float64{PositionAddressInfo.Lon, PositionAddressInfo.Lat, 0}, PositionAddressInfo))
+				[]float64{PositionAddressInfo.LocLongtitue, PositionAddressInfo.LocLatitude, 0}, PositionAddressInfo))
 	}
 
 	return *ULKDT
@@ -43,7 +43,7 @@ func (ULKDT *ULKDTree) PositionAddressInfoInsert(PositionAddressInfo models.Posi
 
 	ULKDT.PositionAddressInfoKdTree.Insert(
 		points.NewPoint(
-			[]float64{PositionAddressInfo.Lon, PositionAddressInfo.Lat, 0}, PositionAddressInfo))
+			[]float64{PositionAddressInfo.LocLongtitue, PositionAddressInfo.LocLatitude, 0}, PositionAddressInfo))
 
 	return *ULKDT
 }

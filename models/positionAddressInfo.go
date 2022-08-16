@@ -1,17 +1,10 @@
 package models
 
-import (
-	"time"
-)
-
-type ULDecimalTreeNode struct {
-	PositionAddressInfoInfo           map[uint]PositionAddressInfo
-	PositionAddressInfoDecimalLatTree map[uint]ULDecimalTreeNode
-}
+import "time"
 
 type PositionAddressInfo struct {
-	ID        uint64  `json:"id" gorm:"primaryKey"`
-	Lon       float64 `json:"Lon"`
-	Lat       float64 `json:"Lat"`
-	CreatedAt time.Time
+	UserCode     uint64  `json:"id" gorm:"primaryKey"`
+	LocLatitude  float64 `json:"Lon"`
+	LocLongtitue float64 `json:"Lat"`
+	CreatedAt    time.Time
 }

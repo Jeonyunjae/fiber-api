@@ -2,24 +2,36 @@ package service
 
 import (
 	"github.com/jeonyunjae/fiber-api/models"
-	"github.com/jeonyunjae/fiber-api/service/PositionAddressInfo/mymap"
-	"github.com/jeonyunjae/fiber-api/service/PositionAddressInfo/myorm"
-	"github.com/jeonyunjae/fiber-api/service/PositionAddressInfo/myquery"
-	"github.com/jeonyunjae/fiber-api/service/PositionAddressInfo/myslice"
-	"github.com/jeonyunjae/fiber-api/service/positionAddressInfo/mykdtree"
+	"github.com/jeonyunjae/fiber-api/service/positionaddressinfo/mykdtree"
+	"github.com/jeonyunjae/fiber-api/service/positionaddressinfo/mymap"
+	"github.com/jeonyunjae/fiber-api/service/positionaddressinfo/myorm"
+	"github.com/jeonyunjae/fiber-api/service/positionaddressinfo/myquery"
+	"github.com/jeonyunjae/fiber-api/service/positionaddressinfo/myslice"
 	"github.com/jeonyunjae/fiber-api/util/log"
 )
+
+type ULStuct struct {
+	PositionAddressInfoMap map[int]models.PositionAddressInfo
+}
 
 // PositionAddressInfo Data 정의
 func ServiceInit() error {
 
-	// 1.slice
+	// 1.orm
+	ormData := myorm.PositionAddressInfo.PositionAddressInfosInit()
+	if ormData.PositionAddressInfoOrm == nil {
+		return log.MyError("Error_ServiceInit_Orm")
+	}
+
+	tempSliceData, err := myorm.PositionAddressInfo.PositionAddressInfoAllRead()
+	if tempSliceData == nil || err != nil {
+		return log.MyError("Error_ServiceInit_ormData.PositionAddressInfoAllRead")
+	}
+	// 2.slice
 	sliceData := myslice.PositionAddressInfo.PositionAddressInfosInit()
 	if sliceData.PositionAddressInfoSlice == nil {
 		return log.MyError("Error_ServiceInit_Slice")
 	}
-
-	// 2.decimaltree
 
 	// 3.map
 	mapData := mymap.PositionAddressInfo.PositionAddressInfosInit()
@@ -32,13 +44,8 @@ func ServiceInit() error {
 	if kdtreeData.PositionAddressInfoKdTree.Points() == nil {
 		return log.MyError("Error_ServiceInit_KdTree")
 	}
-	// 5.orm
-	ormData := myorm.PositionAddressInfo.PositionAddressInfosInit()
-	if ormData.PositionAddressInfoOrm == nil {
-		return log.MyError("Error_ServiceInit_Orm")
-	}
 
-	// 6.query
+	// 5.query
 	queryData := myquery.PositionAddressInfo.PositionAddressInfosInit()
 	if queryData.PositionAddressInfoQuery == nil {
 		return log.MyError("Error_ServiceInit_Query")

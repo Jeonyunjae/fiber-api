@@ -15,7 +15,7 @@ type ULSlice struct {
 func (ULL *ULSlice) PositionAddressInfosInit() ULSlice {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 
-	ULL.PositionAddressInfoSlice = util.PositionAddressInfoCsvToStruct()
+	//ULL.PositionAddressInfoSlice = util.PositionAddressInfoCsvToStruct()
 
 	return *ULL
 }
@@ -37,9 +37,9 @@ func (ULL *ULSlice) PositionAddressInfoUpdate(ul models.PositionAddressInfo) mod
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 	var row models.PositionAddressInfo
 	for _, row = range ULL.PositionAddressInfoSlice {
-		if row.ID == ul.ID {
-			row.Lat = ul.Lat
-			row.Lon = ul.Lon
+		if row.UserCode == ul.UserCode {
+			row.LocLatitude = ul.LocLatitude
+			row.LocLongtitue = ul.LocLongtitue
 			return row
 		}
 	}

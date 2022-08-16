@@ -23,7 +23,7 @@ func (ULM *ULMap) PositionAddressInfosInit() ULMap {
 func (ULM *ULMap) PositionAddressInfoInsert(ul models.PositionAddressInfo) ULMap {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 
-	ULM.PositionAddressInfoMap[int(ul.ID)] = ul
+	ULM.PositionAddressInfoMap[int(ul.UserCode)] = ul
 
 	return *ULM
 }
@@ -37,9 +37,9 @@ func (ULM *ULMap) PositionAddressInfoUpdate(ul models.PositionAddressInfo) (bool
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 	var row models.PositionAddressInfo
 	for _, row = range ULM.PositionAddressInfoMap {
-		if row.ID == ul.ID {
-			row.Lat = ul.Lat
-			row.Lon = ul.Lon
+		if row.UserCode == ul.UserCode {
+			row.LocLatitude = ul.LocLatitude
+			row.LocLongtitue = ul.LocLongtitue
 			return true, nil
 		}
 	}

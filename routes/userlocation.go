@@ -7,7 +7,7 @@ import (
 )
 
 func CreateResponsePositionAddressInfo(positionAddressInfo models.PositionAddressInfo) models.PositionAddressInfo {
-	return models.PositionAddressInfo{ID: positionAddressInfo.ID, Lon: positionAddressInfo.Lon, Lat: positionAddressInfo.Lat}
+	return models.PositionAddressInfo{UserCode: positionAddressInfo.UserCode, LocLongtitue: positionAddressInfo.LocLongtitue, LocLatitude: positionAddressInfo.LocLatitude}
 }
 
 func PositionAddressInfoInsert(c *fiber.Ctx) error {

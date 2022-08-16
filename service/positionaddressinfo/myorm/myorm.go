@@ -37,10 +37,17 @@ func (ULO *ULOrm) PositionAddressInfoRead(ul models.PositionAddressInfo) ([]mode
 	result := map[models.PositionAddressInfo]interface{}{}
 	ULO.PositionAddressInfoOrm.Table("PositionAddressInfo").Take(&result)
 
-	data, err := ULO.PositionAddressInfoOrm.Rows()
-	if data == nil || err != nil {
+	return nil, nil
+}
 
-	}
+func (ULO *ULOrm) PositionAddressInfoAllRead() ([]models.PositionAddressInfo, error) {
+	defer log.ElapsedTime(log.TraceFn(), "start")()
+
+	// works with Take
+	result := map[models.PositionAddressInfo]interface{}{}
+	ULO.PositionAddressInfoOrm.Table("PositionAddressInfo").Take(&result)
+
+	ULO.PositionAddressInfoOrm.Select("UserCode")
 
 	return nil, nil
 }

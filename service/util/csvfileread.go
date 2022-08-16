@@ -15,9 +15,9 @@ func PositionAddressInfoCsvToStruct() []models.PositionAddressInfo {
 
 	for _, row := range rows {
 		var PositionAddressInfo models.PositionAddressInfo
-		PositionAddressInfo.ID, _ = strconv.ParseUint(row[0], 10, 32)
-		PositionAddressInfo.Lon, _ = strconv.ParseFloat(row[1], 64)
-		PositionAddressInfo.Lat, _ = strconv.ParseFloat(row[2], 64)
+		PositionAddressInfo.UserCode, _ = strconv.ParseUint(row[0], 10, 32)
+		PositionAddressInfo.LocLongtitue, _ = strconv.ParseFloat(row[1], 64)
+		PositionAddressInfo.LocLatitude, _ = strconv.ParseFloat(row[2], 64)
 
 		responsePositionAddressInfos = append(responsePositionAddressInfos, PositionAddressInfo)
 	}
@@ -31,9 +31,9 @@ func PositionAddressInfoCsvToMap() map[int]models.PositionAddressInfo {
 
 	for num, row := range rows {
 		var PositionAddressInfo models.PositionAddressInfo
-		PositionAddressInfo.ID, _ = strconv.ParseUint(row[0], 10, 32)
-		PositionAddressInfo.Lon, _ = strconv.ParseFloat(row[1], 64)
-		PositionAddressInfo.Lat, _ = strconv.ParseFloat(row[2], 64)
+		PositionAddressInfo.UserCode, _ = strconv.ParseUint(row[0], 10, 32)
+		PositionAddressInfo.LocLongtitue, _ = strconv.ParseFloat(row[1], 64)
+		PositionAddressInfo.LocLatitude, _ = strconv.ParseFloat(row[2], 64)
 
 		m[num] = PositionAddressInfo
 	}

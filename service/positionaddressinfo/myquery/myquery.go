@@ -25,10 +25,10 @@ func (ULQ *ULQuery) PositionAddressInfoInsert(PositionAddressInfo models.Positio
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 
 	resValue := ULQ.PositionAddressInfoQuery.QueryRow(
-		"insert into PositionAddressInfo (id,citycode,lat,lon) values (%s,%s,%s,%s)",
-		PositionAddressInfo.ID,
-		PositionAddressInfo.Lat,
-		PositionAddressInfo.Lon)
+		"insert into PositionAddressInfo (userCode, locLatitude, locLongtitue) values (%s,%s,%s)",
+		PositionAddressInfo.UserCode,
+		PositionAddressInfo.LocLatitude,
+		PositionAddressInfo.LocLongtitue)
 	if resValue.Err() != nil {
 		return log.MyError(resValue.Err().Error())
 	}

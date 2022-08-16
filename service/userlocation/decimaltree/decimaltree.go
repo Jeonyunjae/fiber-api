@@ -1,5 +1,0 @@
-package decimaltree
-
-func init() {
-
-}

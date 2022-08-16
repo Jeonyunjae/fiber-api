@@ -20,7 +20,7 @@ func FileRead(path string) ([][]string, error) {
 	return rows, error
 }
 
-func FileWrite() {
+func FileWrite(rows [][]string) {
 	// 파일 생성
 	file, err := os.Create("./output.csv")
 	if err != nil {
@@ -31,7 +31,18 @@ func FileWrite() {
 	wr := csv.NewWriter(bufio.NewWriter(file))
 
 	// csv 내용 쓰기
-	wr.Write([]string{"A", "0.25"})
-	wr.Write([]string{"B", "55.70"})
+	for _, row := range rows {
+		wr.Write([]string{
+			row[0],
+			row[1],
+			row[2],
+			row[3],
+			row[4],
+			row[5],
+			row[6],
+			row[7],
+			row[8]})
+	}
+
 	wr.Flush()
 }

@@ -1,5 +1,0 @@
-package kdtree
-
-func init() {
-
-}

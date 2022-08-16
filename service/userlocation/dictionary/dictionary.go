@@ -1,5 +1,0 @@
-package dictionary
-
-func init() {
-
-}

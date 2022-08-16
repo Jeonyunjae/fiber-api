@@ -1,132 +1,161 @@
 package routes
 
 import (
-	"errors"
-
 	"github.com/gofiber/fiber/v2"
-	"github.com/jeonyunjae/fiber-api/database"
 	"github.com/jeonyunjae/fiber-api/models"
+	"github.com/jeonyunjae/fiber-api/service"
 )
 
-func CreateResponseUserLocation(userLocation models.UserLocation) models.UserLocation {
-	return models.UserLocation{ID: userLocation.ID, Lon: userLocation.Lon, Lat: userLocation.Lat, CityCode: userLocation.CityCode}
+func CreateResponsePositionAddressInfo(positionAddressInfo models.PositionAddressInfo) models.PositionAddressInfo {
+	return models.PositionAddressInfo{ID: positionAddressInfo.ID, Lon: positionAddressInfo.Lon, Lat: positionAddressInfo.Lat}
 }
 
-func CreateUserLocation(c *fiber.Ctx) error {
-	var UserLocation models.UserLocation
+func PositionAddressInfoInsert(c *fiber.Ctx) error {
+	var PositionAddressInfo models.PositionAddressInfo
 
-	if err := c.BodyParser(&UserLocation); err != nil {
+	if err := c.BodyParser(&PositionAddressInfo); err != nil {
 		return c.Status(400).JSON(err.Error())
 	}
 
-	//1. decimaltree
-	//2. dictionary
-	//3. kdtree
-	//4. list
-	//models.UserLocation = list.UserlocationList.CreateUserlocationList(UserLocation)
-	//5. orm
-	//6. query
+	service.ServiceInsert(PositionAddressInfo)
 
-	database.Database.Db.Create(&UserLocation)
-
-	responseUserLocation := CreateResponseUserLocation(UserLocation)
-	return c.Status(200).JSON(responseUserLocation)
+	responsePositionAddressInfo := CreateResponsePositionAddressInfo(PositionAddressInfo)
+	return c.Status(200).JSON(responsePositionAddressInfo)
 }
 
-func GetUserLocations(c *fiber.Ctx) error {
-	userlocations := []models.UserLocation{}
-	database.Database.Db.Find(&userlocations)
-	responseUserLocations := []models.UserLocation{}
-	for _, userlocation := range userlocations {
-		responseUserLocation := CreateResponseUserLocation(userlocation)
-		responseUserLocations = append(responseUserLocations, responseUserLocation)
-	}
+func PositionAddressInfoReads(c *fiber.Ctx) error {
+	var PositionAddressInfo models.PositionAddressInfo
 
-	return c.Status(200).JSON(responseUserLocations)
-}
-
-func findUserLocation(id int, userLocation *models.UserLocation) error {
-	database.Database.Db.Find(&userLocation, "id = ?", id)
-	if userLocation.ID == 0 {
-		return errors.New("user does not exist")
-	}
-	return nil
-}
-
-func GetUserLocation(c *fiber.Ctx) error {
-	id, err := c.ParamsInt("id")
-
-	var userLocation models.UserLocation
-
-	if err != nil {
-		return c.Status(400).JSON("Please ensure that :id is an integer")
-	}
-
-	if err := findUserLocation(id, &userLocation); err != nil {
+	if err := c.BodyParser(&PositionAddressInfo); err != nil {
 		return c.Status(400).JSON(err.Error())
 	}
 
-	responseUserLocation := CreateResponseUserLocation(userLocation)
+	service.ServiceRead(PositionAddressInfo)
 
-	return c.Status(200).JSON(responseUserLocation)
+	responsePositionAddressInfo := CreateResponsePositionAddressInfo(PositionAddressInfo)
+	return c.Status(200).JSON(responsePositionAddressInfo)
 }
 
-func UpdateUserLocation(c *fiber.Ctx) error {
-	id, err := c.ParamsInt("id")
+func PositionAddressInfoUpdate(c *fiber.Ctx) error {
+	var PositionAddressInfo models.PositionAddressInfo
 
-	var userLocation models.UserLocation
-
-	if err != nil {
-		return c.Status(400).JSON("Please ensure that :id is an integer")
-	}
-
-	err = findUserLocation(id, &userLocation)
-
-	if err != nil {
+	if err := c.BodyParser(&PositionAddressInfo); err != nil {
 		return c.Status(400).JSON(err.Error())
 	}
 
-	type UpdateUserLocation struct {
-		Lon      float64 `json:"Lon"`
-		Lat      float64 `json:"Lat"`
-		CityCode uint64  `json:"CityCode"`
-	}
+	service.ServiceUpdate(PositionAddressInfo)
 
-	var updateData UpdateUserLocation
-
-	if err := c.BodyParser(&updateData); err != nil {
-		return c.Status(500).JSON(err.Error())
-	}
-
-	userLocation.Lon = updateData.Lon
-	userLocation.Lat = updateData.Lat
-	userLocation.CityCode = updateData.CityCode
-
-	database.Database.Db.Save(&userLocation)
-
-	responseUserLocation := CreateResponseUserLocation(userLocation)
-
-	return c.Status(200).JSON(responseUserLocation)
-
+	responsePositionAddressInfo := CreateResponsePositionAddressInfo(PositionAddressInfo)
+	return c.Status(200).JSON(responsePositionAddressInfo)
 }
 
-func DeleteUserLocation(c *fiber.Ctx) error {
-	id, err := c.ParamsInt("id")
+func PositionAddressInfoDelete(c *fiber.Ctx) error {
+	var PositionAddressInfo models.PositionAddressInfo
 
-	var userLocation models.UserLocation
-
-	if err != nil {
-		return c.Status(400).JSON("Please ensure that :id is an integer")
-	}
-
-	err = findUserLocation(id, &userLocation)
-
-	if err != nil {
+	if err := c.BodyParser(&PositionAddressInfo); err != nil {
 		return c.Status(400).JSON(err.Error())
 	}
 
-	if err = database.Database.Db.Delete(&userLocation).Error; err != nil {
-		return c.Status(404).JSON(err.Error())
-	}
-	return c.Status(200).JSON("Successfully deleted User")
+	service.ServiceDelete(PositionAddressInfo)
+
+	responsePositionAddressInfo := CreateResponsePositionAddressInfo(PositionAddressInfo)
+	return c.Status(200).JSON(responsePositionAddressInfo)
 }
+
+// func GetPositionAddressInfos(c *fiber.Ctx) error {
+// 	PositionAddressInfos := []models.PositionAddressInfo{}
+// 	gorm.Database.Db.Find(&PositionAddressInfos)
+// 	responsePositionAddressInfos := []models.PositionAddressInfo{}
+// 	for _, PositionAddressInfo := range PositionAddressInfos {
+// 		responsePositionAddressInfo := CreateResponsePositionAddressInfo(PositionAddressInfo)
+// 		responsePositionAddressInfos = append(responsePositionAddressInfos, responsePositionAddressInfo)
+// 	}
+
+// 	return c.Status(200).JSON(responsePositionAddressInfos)
+// }
+
+// func findPositionAddressInfo(id int, PositionAddressInfo *models.PositionAddressInfo) error {
+// 	gorm.Database.Db.Find(&PositionAddressInfo, "id = ?", id)
+// 	if PositionAddressInfo.ID == 0 {
+// 		return errors.New("user does not exist")
+// 	}
+// 	return nil
+// }
+
+// func GetPositionAddressInfo(c *fiber.Ctx) error {
+// 	id, err := c.ParamsInt("id")
+
+// 	var PositionAddressInfo models.PositionAddressInfo
+
+// 	if err != nil {
+// 		return c.Status(400).JSON("Please ensure that :id is an integer")
+// 	}
+
+// 	if err := findPositionAddressInfo(id, &PositionAddressInfo); err != nil {
+// 		return c.Status(400).JSON(err.Error())
+// 	}
+
+// 	responsePositionAddressInfo := CreateResponsePositionAddressInfo(PositionAddressInfo)
+
+// 	return c.Status(200).JSON(responsePositionAddressInfo)
+// }
+
+// func UpdatePositionAddressInfo(c *fiber.Ctx) error {
+// 	id, err := c.ParamsInt("id")
+
+// 	var PositionAddressInfo models.PositionAddressInfo
+
+// 	if err != nil {
+// 		return c.Status(400).JSON("Please ensure that :id is an integer")
+// 	}
+
+// 	err = findPositionAddressInfo(id, &PositionAddressInfo)
+
+// 	if err != nil {
+// 		return c.Status(400).JSON(err.Error())
+// 	}
+
+// 	type UpdatePositionAddressInfo struct {
+// 		Lon      float64 `json:"Lon"`
+// 		Lat      float64 `json:"Lat"`
+// 		CityCode uint64  `json:"CityCode"`
+// 	}
+
+// 	var updateData UpdatePositionAddressInfo
+
+// 	if err := c.BodyParser(&updateData); err != nil {
+// 		return c.Status(500).JSON(err.Error())
+// 	}
+
+// 	PositionAddressInfo.Lon = updateData.Lon
+// 	PositionAddressInfo.Lat = updateData.Lat
+// 	PositionAddressInfo.CityCode = updateData.CityCode
+
+// 	gorm.Database.Db.Save(&PositionAddressInfo)
+
+// 	responsePositionAddressInfo := CreateResponsePositionAddressInfo(PositionAddressInfo)
+
+// 	return c.Status(200).JSON(responsePositionAddressInfo)
+
+// }
+
+// func DeletePositionAddressInfo(c *fiber.Ctx) error {
+// 	id, err := c.ParamsInt("id")
+
+// 	var PositionAddressInfo models.PositionAddressInfo
+
+// 	if err != nil {
+// 		return c.Status(400).JSON("Please ensure that :id is an integer")
+// 	}
+
+// 	err = findPositionAddressInfo(id, &PositionAddressInfo)
+
+// 	if err != nil {
+// 		return c.Status(400).JSON(err.Error())
+// 	}
+
+// 	if err = gorm.Database.Db.Delete(&PositionAddressInfo).Error; err != nil {
+// 		return c.Status(404).JSON(err.Error())
+// 	}
+// 	return c.Status(200).JSON("Successfully deleted User")
+// }

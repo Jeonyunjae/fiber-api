@@ -15,8 +15,8 @@ func PositionAddressInfoCsvToStruct() []models.PositionAddressInfo {
 
 	for _, row := range rows {
 		var PositionAddressInfo models.PositionAddressInfo
-		PositionAddressInfo.UserCode, _ = strconv.ParseUint(row[0], 10, 32)
-		PositionAddressInfo.LocLongtitue, _ = strconv.ParseFloat(row[1], 64)
+		PositionAddressInfo.UserCode = row[0]
+		PositionAddressInfo.LocLongtitude, _ = strconv.ParseFloat(row[1], 64)
 		PositionAddressInfo.LocLatitude, _ = strconv.ParseFloat(row[2], 64)
 
 		responsePositionAddressInfos = append(responsePositionAddressInfos, PositionAddressInfo)
@@ -24,18 +24,18 @@ func PositionAddressInfoCsvToStruct() []models.PositionAddressInfo {
 	return responsePositionAddressInfos
 }
 
-func PositionAddressInfoCsvToMap() map[int]models.PositionAddressInfo {
+func PositionAddressInfoCsvToMap() map[string]models.PositionAddressInfo {
 	rows, _ := excel.FileRead("./fulldata.csv")
 
-	m := make(map[int]models.PositionAddressInfo)
+	m := make(map[string]models.PositionAddressInfo)
 
-	for num, row := range rows {
+	for _, row := range rows {
 		var PositionAddressInfo models.PositionAddressInfo
-		PositionAddressInfo.UserCode, _ = strconv.ParseUint(row[0], 10, 32)
-		PositionAddressInfo.LocLongtitue, _ = strconv.ParseFloat(row[1], 64)
+		PositionAddressInfo.UserCode = row[0]
+		PositionAddressInfo.LocLongtitude, _ = strconv.ParseFloat(row[1], 64)
 		PositionAddressInfo.LocLatitude, _ = strconv.ParseFloat(row[2], 64)
 
-		m[num] = PositionAddressInfo
+		m[PositionAddressInfo.UserCode] = PositionAddressInfo
 	}
 	return m
 }

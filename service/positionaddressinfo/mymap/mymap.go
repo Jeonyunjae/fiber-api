@@ -2,35 +2,47 @@ package mymap
 
 import (
 	"github.com/jeonyunjae/fiber-api/models"
-	"github.com/jeonyunjae/fiber-api/service/util"
 	"github.com/jeonyunjae/fiber-api/util/log"
 )
 
 var PositionAddressInfo ULMap
 
 type ULMap struct {
-	PositionAddressInfoMap map[int]models.PositionAddressInfo
+	PositionAddressInfoMap map[string]models.PositionAddressInfo
 }
 
-func (ULM *ULMap) PositionAddressInfosInit() ULMap {
+func (ULM *ULMap) PositionAddressInfosInit(rows map[string]models.PositionAddressInfo) error {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 
-	ULM.PositionAddressInfoMap = util.PositionAddressInfoCsvToMap()
+	if rows == nil {
+		return log.MyError("Error_PositionAddressInfosInit")
+	}
+	ULM.PositionAddressInfoMap = rows
 
-	return *ULM
+	return nil
 }
 
-func (ULM *ULMap) PositionAddressInfoInsert(ul models.PositionAddressInfo) ULMap {
+func (ULM *ULMap) PositionAddressInfoInsert(ul models.PositionAddressInfo) error {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 
-	ULM.PositionAddressInfoMap[int(ul.UserCode)] = ul
+	ULM.PositionAddressInfoMap[ul.UserCode] = ul
 
-	return *ULM
+	data, err := ULM.PositionAddressInfoRead(ul)
+	if data.UserCode == "" || err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func (ULM *ULMap) PositionAddressInfoRead(ul models.PositionAddressInfo) ULMap {
+func (ULM *ULMap) PositionAddressInfoRead(ul models.PositionAddressInfo) (models.PositionAddressInfo, error) {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
-	return *ULM
+
+	row := ULM.PositionAddressInfoMap[ul.UserCode]
+	if row.UserCode == "" {
+		return row, log.MyError("NotFound")
+	}
+	return row, nil
 }
 
 func (ULM *ULMap) PositionAddressInfoUpdate(ul models.PositionAddressInfo) (bool, error) {
@@ -39,7 +51,7 @@ func (ULM *ULMap) PositionAddressInfoUpdate(ul models.PositionAddressInfo) (bool
 	for _, row = range ULM.PositionAddressInfoMap {
 		if row.UserCode == ul.UserCode {
 			row.LocLatitude = ul.LocLatitude
-			row.LocLongtitue = ul.LocLongtitue
+			row.LocLongtitude = ul.LocLongtitude
 			return true, nil
 		}
 	}

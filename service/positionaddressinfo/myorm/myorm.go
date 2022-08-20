@@ -13,17 +13,20 @@ type ULOrm struct {
 	PositionAddressInfoOrm *gorm.DB
 }
 
-func (ULO *ULOrm) PositionAddressInfosInit() ULOrm {
+func (ULO *ULOrm) PositionAddressInfosInit() error {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
+	if mydbgorm.Database.Db == nil {
+		return log.MyError("Error_PositionAddressInfosInit")
+	}
 	PositionAddressInfo.PositionAddressInfoOrm = mydbgorm.Database.Db
 
-	return *ULO
+	return nil
 }
 
-func (ULO *ULOrm) PositionAddressInfoInsert(PositionAddressInfo models.PositionAddressInfo) error {
+func (ULO *ULOrm) PositionAddressInfoInsert(ul models.PositionAddressInfo) error {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 
-	err := ULO.PositionAddressInfoOrm.Create(PositionAddressInfo)
+	err := ULO.PositionAddressInfoOrm.Create(ul)
 	if err == nil {
 		return err.Error
 	}
@@ -44,10 +47,13 @@ func (ULO *ULOrm) PositionAddressInfoAllRead() ([]models.PositionAddressInfo, er
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 
 	// works with Take
-	result := map[models.PositionAddressInfo]interface{}{}
-	ULO.PositionAddressInfoOrm.Table("PositionAddressInfo").Take(&result)
+	//result := map[models.PositionAddressInfo]interface{}{}
+	//ULO.PositionAddressInfoOrm.Table("PositionAddressInfo").Take(&result)
 
-	ULO.PositionAddressInfoOrm.Select("UserCode")
+	data := ULO.PositionAddressInfoOrm.Select("UserCode")
+	if data == nil {
+		return nil, nil
+	}
 
 	return nil, nil
 }

@@ -36,5 +36,14 @@ func ConnectDb() {
 			log.MyError(err.Error())
 		}
 		Database = DBInstance{Db: db}
+
+		//db.ping() 만약 db연결이 실패할 경우 왜 실패한건지 에러찍는 용도
+		if err != nil || db.Ping() != nil {
+			panic(err.Error())
+		}
 	}
+}
+
+func (DBInstance *DBInstance) Close() {
+	DBInstance.Db.Close()
 }

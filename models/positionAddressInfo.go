@@ -1,10 +1,7 @@
 package models
 
-import "time"
-
 type PositionAddressInfo struct {
-	UserCode     uint64  `json:"id" gorm:"primaryKey"`
-	LocLatitude  float64 `json:"Lon"`
-	LocLongtitue float64 `json:"Lat"`
-	CreatedAt    time.Time
+	UserCode      string  `json:"userCode" gorm:"primaryKey"`
+	LocLatitude   float64 `json:"locLatitude"`
+	LocLongtitude float64 `json:"locLongtitude"`
 }

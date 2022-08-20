@@ -7,7 +7,7 @@ import (
 )
 
 func CreateResponsePositionAddressInfo(positionAddressInfo models.PositionAddressInfo) models.PositionAddressInfo {
-	return models.PositionAddressInfo{UserCode: positionAddressInfo.UserCode, LocLongtitue: positionAddressInfo.LocLongtitue, LocLatitude: positionAddressInfo.LocLatitude}
+	return models.PositionAddressInfo{UserCode: positionAddressInfo.UserCode, LocLongtitude: positionAddressInfo.LocLongtitude, LocLatitude: positionAddressInfo.LocLatitude}
 }
 
 func PositionAddressInfoInsert(c *fiber.Ctx) error {
@@ -24,6 +24,19 @@ func PositionAddressInfoInsert(c *fiber.Ctx) error {
 }
 
 func PositionAddressInfoReads(c *fiber.Ctx) error {
+	var PositionAddressInfo models.PositionAddressInfo
+
+	if err := c.BodyParser(&PositionAddressInfo); err != nil {
+		return c.Status(400).JSON(err.Error())
+	}
+
+	service.ServiceReads(PositionAddressInfo)
+
+	responsePositionAddressInfo := CreateResponsePositionAddressInfo(PositionAddressInfo)
+	return c.Status(200).JSON(responsePositionAddressInfo)
+}
+
+func PositionAddressInfoRead(c *fiber.Ctx) error {
 	var PositionAddressInfo models.PositionAddressInfo
 
 	if err := c.BodyParser(&PositionAddressInfo); err != nil {

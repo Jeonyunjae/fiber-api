@@ -10,7 +10,8 @@ func RoutesInit(app *fiber.App) {
 	app.Get("/api", Welcome)
 
 	// User Location
-	app.Post("/api/PositionAddressInfoinsert", PositionAddressInfoInsert)
+	app.Post("/api/PositionAddressInfoInsert", PositionAddressInfoInsert)
+	app.Post("/api/PositionAddressInfoRead", PositionAddressInfoRead)
 	// app.Get("/api/PositionAddressInfo", GetPositionAddressInfos)
 	// app.Get("/api/PositionAddressInfo/:id", GetPositionAddressInfo)
 	// app.Put("/api/PositionAddressInfo/:id", UpdatePositionAddressInfo)

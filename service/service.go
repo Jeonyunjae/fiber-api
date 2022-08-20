@@ -1,14 +1,27 @@
 package service
 
 import (
+	"sync"
+
 	"github.com/jeonyunjae/fiber-api/models"
 	"github.com/jeonyunjae/fiber-api/service/positionaddressinfo/mykdtree"
 	"github.com/jeonyunjae/fiber-api/service/positionaddressinfo/mymap"
 	"github.com/jeonyunjae/fiber-api/service/positionaddressinfo/myorm"
 	"github.com/jeonyunjae/fiber-api/service/positionaddressinfo/myquery"
 	"github.com/jeonyunjae/fiber-api/service/positionaddressinfo/myslice"
-	"github.com/jeonyunjae/fiber-api/util/log"
+	"github.com/jeonyunjae/fiber-api/service/positionaddressinfo/share"
 )
+
+type ICrud interface {
+	PositionAddressInfosInit() error
+	PositionAddressInfosInsert(models.PositionAddressInfo) error
+	PositionAddressInfosRead(models.PositionAddressInfo) ([]models.PositionAddressInfo, error)
+	PositionAddressInfosAllRead() ([]models.PositionAddressInfo, error)
+	PositionAddressInfosUpdate(models.PositionAddressInfo) (bool, error)
+	PositionAddressInfosDelete(models.PositionAddressInfo) (bool, error)
+}
+
+var IORM ICrud
 
 type ULStuct struct {
 	PositionAddressInfoMap map[int]models.PositionAddressInfo
@@ -18,94 +31,158 @@ type ULStuct struct {
 func ServiceInit() error {
 
 	// 1.orm
-	ormData := myorm.PositionAddressInfo.PositionAddressInfosInit()
-	if ormData.PositionAddressInfoOrm == nil {
-		return log.MyError("Error_ServiceInit_Orm")
+	err := myorm.PositionAddressInfo.PositionAddressInfosInit()
+	if err != nil {
+		return err
 	}
 
-	tempSliceData, err := myorm.PositionAddressInfo.PositionAddressInfoAllRead()
-	if tempSliceData == nil || err != nil {
-		return log.MyError("Error_ServiceInit_ormData.PositionAddressInfoAllRead")
-	}
-	// 2.slice
-	sliceData := myslice.PositionAddressInfo.PositionAddressInfosInit()
-	if sliceData.PositionAddressInfoSlice == nil {
-		return log.MyError("Error_ServiceInit_Slice")
+	// 2.query
+	err = myquery.PositionAddressInfo.PositionAddressInfosInit()
+	if err != nil {
+		return err
 	}
 
-	// 3.map
-	mapData := mymap.PositionAddressInfo.PositionAddressInfosInit()
-	if mapData.PositionAddressInfoMap == nil {
-		return log.MyError("Error_ServiceInit_Map")
+	tempMapeData, err := myquery.PositionAddressInfo.PositionAddressInfoAllRead()
+	if tempMapeData == nil || err != nil {
+		return err
 	}
 
-	// 4.kdtree
-	kdtreeData := mykdtree.PositionAddressInfo.PositionAddressInfosInit()
-	if kdtreeData.PositionAddressInfoKdTree.Points() == nil {
-		return log.MyError("Error_ServiceInit_KdTree")
+	// 3.slice
+	err = myslice.PositionAddressInfo.PositionAddressInfosInit(
+		share.PositionAddressInfoMapToSlice(tempMapeData))
+	if err != nil {
+		return err
+	}
+
+	// 4.map
+	err = mymap.PositionAddressInfo.PositionAddressInfosInit(tempMapeData)
+	if err != nil {
+		return err
+	}
+
+	// 5.kdtree
+	err = mykdtree.PositionAddressInfo.PositionAddressInfosInit(tempMapeData)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// PositionAddressInfo 데이터 추가
+func ServiceInsert(PositionAddressInfo models.PositionAddressInfo) error {
+
+	// 1.slice
+	err := myslice.PositionAddressInfo.PositionAddressInfoInsert(PositionAddressInfo)
+	if err != nil {
+		return err
+	}
+
+	//2.map
+	err = mymap.PositionAddressInfo.PositionAddressInfoInsert(PositionAddressInfo)
+	if err != nil {
+		return err
+	}
+
+	// 3.kdtree
+	err = mykdtree.PositionAddressInfo.PositionAddressInfoInsert(PositionAddressInfo)
+	if err != nil {
+		return err
+	}
+
+	// 4.orm
+	err = myorm.PositionAddressInfo.PositionAddressInfoInsert(PositionAddressInfo)
+	if err != nil {
+		return err
 	}
 
 	// 5.query
-	queryData := myquery.PositionAddressInfo.PositionAddressInfosInit()
-	if queryData.PositionAddressInfoQuery == nil {
-		return log.MyError("Error_ServiceInit_Query")
-	}
-	//test
-	//util.PostAddressDefineCsvToDb()
-	return nil
-}
-
-//PositionAddressInfo 데이터 추가
-func ServiceInsert(PositionAddressInfo models.PositionAddressInfo) error {
-	// 1.slice
-	resSlice := myslice.PositionAddressInfo.PositionAddressInfoInsert(PositionAddressInfo)
-	if resSlice.PositionAddressInfoSlice == nil {
-		return log.MyError("CreateListError")
-	}
-	// 2.decimaltree
-
-	//3.map
-	resMap := mymap.PositionAddressInfo.PositionAddressInfoInsert(PositionAddressInfo)
-	if resMap.PositionAddressInfoMap == nil {
-		return log.MyError("CreateListError")
-	}
-	// 4.kdtree
-	resKDTree := mykdtree.PositionAddressInfo.PositionAddressInfoInsert(PositionAddressInfo)
-	resKDTree.PositionAddressInfoKdTree.Balance()
-
-	// 5.orm
-	resOrm := myorm.PositionAddressInfo.PositionAddressInfoInsert(PositionAddressInfo)
-	if resOrm == nil {
-		return log.MyError("CreateListError" + resOrm.Error())
-	}
-	// 6.query
-	resQuery := myquery.PositionAddressInfo.PositionAddressInfoInsert(PositionAddressInfo)
-	if resQuery == nil {
-		return log.MyError("CreateListError" + resQuery.Error())
+	err = myquery.PositionAddressInfo.PositionAddressInfoInsert(PositionAddressInfo)
+	if err != nil {
+		return err
 	}
 
 	return nil
 }
 
-// PositionAddressInfo Data 전체 가져오기
+// PositionAddressInfo Data 특정 하나 가져오기
 func ServiceRead(PositionAddressInfo models.PositionAddressInfo) error {
+	var wg = sync.WaitGroup{}
+	wg.Add(6)
 
 	// 1.slice
-	myslice.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
-
+	go func() {
+		defer wg.Done()
+		myslice.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
+	}()
 	// 2.decimaltree
 
 	//3.map
-	mymap.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
+	go func() {
+		defer wg.Done()
+		mymap.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
 
+	}()
 	// 4.kdtree
-	mykdtree.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
+	go func() {
+		defer wg.Done()
+		mykdtree.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
+	}()
 
 	// 5.orm
-	myorm.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
+	go func() {
+		defer wg.Done()
+		//myorm.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
+	}()
 
 	// 6.query
-	myquery.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
+	go func() {
+		defer wg.Done()
+		myquery.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
+	}()
+
+	wg.Wait()
+
+	return nil
+}
+
+// PositionAddressInfo Data 특정 조건의 값들 가져오기
+func ServiceReads(PositionAddressInfo models.PositionAddressInfo) error {
+	var wg = sync.WaitGroup{}
+	wg.Add(6)
+
+	// 1.slice
+	go func() {
+		defer wg.Done()
+		myslice.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
+	}()
+	// 2.decimaltree
+
+	//3.map
+	go func() {
+		defer wg.Done()
+		mymap.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
+
+	}()
+	// 4.kdtree
+	go func() {
+		defer wg.Done()
+		mykdtree.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
+	}()
+
+	// 5.orm
+	go func() {
+		defer wg.Done()
+		myorm.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
+	}()
+
+	// 6.query
+	go func() {
+		defer wg.Done()
+		myquery.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
+	}()
+
+	wg.Wait()
 
 	return nil
 }

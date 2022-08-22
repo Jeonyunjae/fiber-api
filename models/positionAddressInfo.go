@@ -1,7 +1,7 @@
 package models
 
-type PositionAddressInfo struct {
-	UserCode      string  `json:"userCode" gorm:"primaryKey"`
-	LocLatitude   float64 `json:"locLatitude"`
-	LocLongtitude float64 `json:"locLongtitude"`
+type Positionaddressinfo struct {
+	Usercode      string  `json:"userCode" gorm:"primaryKey"`
+	Loclatitude   float64 `json:"locLatitude"`
+	Loclongtitude float64 `json:"locLongtitude"`
 }

@@ -6,12 +6,12 @@ import (
 	"github.com/jeonyunjae/fiber-api/service"
 )
 
-func CreateResponsePositionAddressInfo(positionAddressInfo models.PositionAddressInfo) models.PositionAddressInfo {
-	return models.PositionAddressInfo{UserCode: positionAddressInfo.UserCode, LocLongtitude: positionAddressInfo.LocLongtitude, LocLatitude: positionAddressInfo.LocLatitude}
+func CreateResponsePositionAddressInfo(positionAddressInfo models.Positionaddressinfo) models.Positionaddressinfo {
+	return models.Positionaddressinfo{Usercode: positionAddressInfo.Usercode, Loclongtitude: positionAddressInfo.Loclongtitude, Loclatitude: positionAddressInfo.Loclatitude}
 }
 
 func PositionAddressInfoInsert(c *fiber.Ctx) error {
-	var PositionAddressInfo models.PositionAddressInfo
+	var PositionAddressInfo models.Positionaddressinfo
 
 	if err := c.BodyParser(&PositionAddressInfo); err != nil {
 		return c.Status(400).JSON(err.Error())
@@ -24,7 +24,7 @@ func PositionAddressInfoInsert(c *fiber.Ctx) error {
 }
 
 func PositionAddressInfoReads(c *fiber.Ctx) error {
-	var PositionAddressInfo models.PositionAddressInfo
+	var PositionAddressInfo models.Positionaddressinfo
 
 	if err := c.BodyParser(&PositionAddressInfo); err != nil {
 		return c.Status(400).JSON(err.Error())
@@ -37,7 +37,7 @@ func PositionAddressInfoReads(c *fiber.Ctx) error {
 }
 
 func PositionAddressInfoRead(c *fiber.Ctx) error {
-	var PositionAddressInfo models.PositionAddressInfo
+	var PositionAddressInfo models.Positionaddressinfo
 
 	if err := c.BodyParser(&PositionAddressInfo); err != nil {
 		return c.Status(400).JSON(err.Error())
@@ -50,7 +50,7 @@ func PositionAddressInfoRead(c *fiber.Ctx) error {
 }
 
 func PositionAddressInfoUpdate(c *fiber.Ctx) error {
-	var PositionAddressInfo models.PositionAddressInfo
+	var PositionAddressInfo models.Positionaddressinfo
 
 	if err := c.BodyParser(&PositionAddressInfo); err != nil {
 		return c.Status(400).JSON(err.Error())
@@ -63,7 +63,7 @@ func PositionAddressInfoUpdate(c *fiber.Ctx) error {
 }
 
 func PositionAddressInfoDelete(c *fiber.Ctx) error {
-	var PositionAddressInfo models.PositionAddressInfo
+	var PositionAddressInfo models.Positionaddressinfo
 
 	if err := c.BodyParser(&PositionAddressInfo); err != nil {
 		return c.Status(400).JSON(err.Error())

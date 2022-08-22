@@ -8,34 +8,34 @@ import (
 	"github.com/jeonyunjae/fiber-api/util/excel"
 )
 
-func PositionAddressInfoCsvToStruct() []models.PositionAddressInfo {
+func PositionAddressInfoCsvToStruct() []models.Positionaddressinfo {
 	rows, _ := excel.FileRead("./fulldata.csv")
 
-	responsePositionAddressInfos := []models.PositionAddressInfo{}
+	responsePositionAddressInfos := []models.Positionaddressinfo{}
 
 	for _, row := range rows {
-		var PositionAddressInfo models.PositionAddressInfo
-		PositionAddressInfo.UserCode = row[0]
-		PositionAddressInfo.LocLongtitude, _ = strconv.ParseFloat(row[1], 64)
-		PositionAddressInfo.LocLatitude, _ = strconv.ParseFloat(row[2], 64)
+		var PositionAddressInfo models.Positionaddressinfo
+		PositionAddressInfo.Usercode = row[0]
+		PositionAddressInfo.Loclongtitude, _ = strconv.ParseFloat(row[1], 64)
+		PositionAddressInfo.Loclatitude, _ = strconv.ParseFloat(row[2], 64)
 
 		responsePositionAddressInfos = append(responsePositionAddressInfos, PositionAddressInfo)
 	}
 	return responsePositionAddressInfos
 }
 
-func PositionAddressInfoCsvToMap() map[string]models.PositionAddressInfo {
+func PositionAddressInfoCsvToMap() map[string]models.Positionaddressinfo {
 	rows, _ := excel.FileRead("./fulldata.csv")
 
-	m := make(map[string]models.PositionAddressInfo)
+	m := make(map[string]models.Positionaddressinfo)
 
 	for _, row := range rows {
-		var PositionAddressInfo models.PositionAddressInfo
-		PositionAddressInfo.UserCode = row[0]
-		PositionAddressInfo.LocLongtitude, _ = strconv.ParseFloat(row[1], 64)
-		PositionAddressInfo.LocLatitude, _ = strconv.ParseFloat(row[2], 64)
+		var PositionAddressInfo models.Positionaddressinfo
+		PositionAddressInfo.Usercode = row[0]
+		PositionAddressInfo.Loclongtitude, _ = strconv.ParseFloat(row[1], 64)
+		PositionAddressInfo.Loclatitude, _ = strconv.ParseFloat(row[2], 64)
 
-		m[PositionAddressInfo.UserCode] = PositionAddressInfo
+		m[PositionAddressInfo.Usercode] = PositionAddressInfo
 	}
 	return m
 }

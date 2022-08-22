@@ -6,3 +6,4 @@ port = 5433
 user = "postgres"
 password = "1234"
 dbname = "FarApp"
+dbnamegorm = "FarApp_GORM"

@@ -74,11 +74,19 @@ func printTreeNode(n *node) string {
 	if n != nil && (n.Left != nil || n.Right != nil) {
 		return fmt.Sprintf("[%s %s %s]", printTreeNode(n.Left), n.String(), printTreeNode(n.Right))
 	}
-	return fmt.Sprintf("%s", n)
+	return fmt.Sprintf("%s", n.String())
 }
 
 // Insert adds a point to the k-d tree.
 func (t *KDTree) Insert(p Point) {
+	if t.root == nil {
+		t.root = &node{Point: p}
+	} else {
+		t.root.Insert(p, 0)
+	}
+}
+
+func (t *KDTree) InsertAdd(p Point) {
 	if t.root == nil {
 		t.root = &node{Point: p}
 	} else {
@@ -108,7 +116,7 @@ func (t *KDTree) Find(p Point) Point {
 	if t.root == nil || p == nil {
 		return nil
 	}
-	n, sub := t.root.Remove(p, 0)
+	n, sub := t.root.Find(p, 0)
 	if n == t.root {
 		t.root = sub
 	}
@@ -293,15 +301,14 @@ func (n *node) Insert(p Point, axis int) {
 		} else {
 			n.Left.Insert(p, (axis+1)%n.Point.Dimensions())
 		}
-	}
-	if p.Dimension(axis) > n.Point.Dimension(axis) {
+	} else if p.Dimension(axis) > n.Point.Dimension(axis) {
 		if n.Right == nil {
 			n.Right = &node{Point: p}
 		} else {
 			n.Right.Insert(p, (axis+1)%n.Point.Dimensions())
 		}
 	} else {
-
+		n.Point.
 	}
 }
 
@@ -362,7 +369,8 @@ func (n *node) Remove(p Point, axis int) (*node, *node) {
 }
 
 // Remove returns (returned node, substitute node)
-func (n *node) Find(p Point, axis int) (*node, *node) {
+
+func (n *node) Find_test(p Point, axis int) (*node, *node) {
 	for i := 0; i < n.Dimensions(); i++ {
 		if n.Dimension(i) != p.Dimension(i) {
 			if n.Left != nil {
@@ -384,37 +392,38 @@ func (n *node) Find(p Point, axis int) (*node, *node) {
 				}
 			}
 			return nil, nil
+		} else {
+			return n, nil
+		}
+	}
+	// equals, remove n
+	return n, nil
+}
+
+func (n *node) Find(p Point, axis int) (*node, *node) {
+	for i := 0; i < n.Dimensions(); i++ {
+		if n.Dimension(i) != p.Dimension(i) {
+			if n.Left != nil {
+				returnedNode, _ := n.Left.Find(p, (axis+1)%n.Dimensions())
+				if returnedNode != nil {
+					return returnedNode, nil
+				}
+			}
+			if n.Right != nil {
+				returnedNode, _ := n.Right.Find(p, (axis+1)%n.Dimensions())
+				if returnedNode != nil {
+					return returnedNode, nil
+				}
+			}
+			return nil, nil
+		} else {
+			return n, nil
 		}
 	}
 
 	// equals, remove n
-
-	if n.Left != nil {
-		largest := n.Left.FindLargest(axis, nil)
-		removed, sub := n.Left.Find(largest, (axis+1)%n.Dimensions())
-
-		removed.Left = n.Left
-		removed.Right = n.Right
-		if n.Left == removed {
-			removed.Left = sub
-		}
-		return n, removed
-	}
-
-	if n.Right != nil {
-		smallest := n.Right.FindSmallest(axis, nil)
-		removed, sub := n.Right.Find(smallest, (axis+1)%n.Dimensions())
-
-		removed.Left = n.Left
-		removed.Right = n.Right
-		if n.Right == removed {
-			removed.Right = sub
-		}
-		return n, removed
-	}
-
-	// n.Left == nil && n.Right == nil
 	return n, nil
+
 }
 
 func (n *node) FindSmallest(axis int, smallest *node) *node {

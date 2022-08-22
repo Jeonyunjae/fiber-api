@@ -4,18 +4,18 @@ import (
 	"github.com/jeonyunjae/fiber-api/models"
 )
 
-func PositionAddressInfoMapToSlice(rows map[string]models.PositionAddressInfo) []models.PositionAddressInfo {
+func PositionAddressInfoMapToSlice(rows map[string]models.Positionaddressinfo) []models.Positionaddressinfo {
 
-	positionAddressInfos := []models.PositionAddressInfo{}
+	positionAddressInfo := []models.Positionaddressinfo{}
 
 	for _, row := range rows {
-		var PositionAddressInfo models.PositionAddressInfo
-		PositionAddressInfo.UserCode = row.UserCode
-		PositionAddressInfo.LocLongtitude = row.LocLongtitude
-		PositionAddressInfo.LocLatitude = row.LocLatitude
+		var PositionAddressInfo models.Positionaddressinfo
+		PositionAddressInfo.Usercode = row.Usercode
+		PositionAddressInfo.Loclongtitude = row.Loclongtitude
+		PositionAddressInfo.Loclatitude = row.Loclatitude
 
-		positionAddressInfos = append(positionAddressInfos, PositionAddressInfo)
+		positionAddressInfo = append(positionAddressInfo, PositionAddressInfo)
 
 	}
-	return positionAddressInfos
+	return positionAddressInfo
 }

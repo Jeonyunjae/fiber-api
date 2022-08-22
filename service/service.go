@@ -13,31 +13,31 @@ import (
 )
 
 type ICrud interface {
-	PositionAddressInfosInit() error
-	PositionAddressInfosInsert(models.PositionAddressInfo) error
-	PositionAddressInfosRead(models.PositionAddressInfo) ([]models.PositionAddressInfo, error)
-	PositionAddressInfosAllRead() ([]models.PositionAddressInfo, error)
-	PositionAddressInfosUpdate(models.PositionAddressInfo) (bool, error)
-	PositionAddressInfosDelete(models.PositionAddressInfo) (bool, error)
+	PositionAddressInfoInit() error
+	PositionAddressInfosInsert(models.Positionaddressinfo) error
+	PositionAddressInfosRead(models.Positionaddressinfo) ([]models.Positionaddressinfo, error)
+	PositionAddressInfosAllRead() ([]models.Positionaddressinfo, error)
+	PositionAddressInfosUpdate(models.Positionaddressinfo) (bool, error)
+	PositionAddressInfosDelete(models.Positionaddressinfo) (bool, error)
 }
 
 var IORM ICrud
 
 type ULStuct struct {
-	PositionAddressInfoMap map[int]models.PositionAddressInfo
+	PositionAddressInfoMap map[int]models.Positionaddressinfo
 }
 
 // PositionAddressInfo Data 정의
 func ServiceInit() error {
 
 	// 1.orm
-	err := myorm.PositionAddressInfo.PositionAddressInfosInit()
+	err := myorm.PositionAddressInfo.PositionAddressInfoInit()
 	if err != nil {
 		return err
 	}
 
 	// 2.query
-	err = myquery.PositionAddressInfo.PositionAddressInfosInit()
+	err = myquery.PositionAddressInfo.PositionAddressInfoInit()
 	if err != nil {
 		return err
 	}
@@ -48,20 +48,20 @@ func ServiceInit() error {
 	}
 
 	// 3.slice
-	err = myslice.PositionAddressInfo.PositionAddressInfosInit(
+	err = myslice.PositionAddressInfo.PositionAddressInfoInit(
 		share.PositionAddressInfoMapToSlice(tempMapeData))
 	if err != nil {
 		return err
 	}
 
 	// 4.map
-	err = mymap.PositionAddressInfo.PositionAddressInfosInit(tempMapeData)
+	err = mymap.PositionAddressInfo.PositionAddressInfoInit(tempMapeData)
 	if err != nil {
 		return err
 	}
 
 	// 5.kdtree
-	err = mykdtree.PositionAddressInfo.PositionAddressInfosInit(tempMapeData)
+	err = mykdtree.PositionAddressInfo.PositionAddressInfoInit(tempMapeData)
 	if err != nil {
 		return err
 	}
@@ -70,7 +70,7 @@ func ServiceInit() error {
 }
 
 // PositionAddressInfo 데이터 추가
-func ServiceInsert(PositionAddressInfo models.PositionAddressInfo) error {
+func ServiceInsert(PositionAddressInfo models.Positionaddressinfo) error {
 
 	// 1.slice
 	err := myslice.PositionAddressInfo.PositionAddressInfoInsert(PositionAddressInfo)
@@ -106,48 +106,86 @@ func ServiceInsert(PositionAddressInfo models.PositionAddressInfo) error {
 }
 
 // PositionAddressInfo Data 특정 하나 가져오기
-func ServiceRead(PositionAddressInfo models.PositionAddressInfo) error {
-	var wg = sync.WaitGroup{}
-	wg.Add(6)
+// func ServiceRead(PositionAddressInfo models.Positionaddressinfo) error {
+// 	var wg = sync.WaitGroup{}
+// 	wg.Add(6)
+
+// 	// 1.slice
+// 	go func() {
+// 		defer wg.Done()
+// 		result, err := myslice.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
+// 		if err != nil || len(result) < 1 {
+// 			return err
+// 		}
+// 	}()
+// 	// 2.decimaltree
+
+// 	//3.map
+// 	go func() {
+// 		defer wg.Done()
+// 		mymap.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
+
+// 	}()
+// 	// 4.kdtree
+// 	go func() {
+// 		defer wg.Done()
+// 		mykdtree.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
+// 	}()
+
+// 	// 5.orm
+// 	go func() {
+// 		defer wg.Done()
+// 		//myorm.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
+// 	}()
+
+// 	// 6.query
+// 	go func() {
+// 		defer wg.Done()
+// 		myquery.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
+// 	}()
+
+// 	wg.Wait()
+
+// 	return nil
+// }
+
+func ServiceRead(PositionAddressInfo models.Positionaddressinfo) error {
 
 	// 1.slice
-	go func() {
-		defer wg.Done()
-		myslice.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
-	}()
-	// 2.decimaltree
+	result, err := myslice.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
+	if err != nil || len(result) < 1 {
+		return err
+	}
 
-	//3.map
-	go func() {
-		defer wg.Done()
-		mymap.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
+	// 2.map
+	result, err = mymap.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
+	if err != nil || len(result) < 1 {
+		return err
+	}
 
-	}()
-	// 4.kdtree
-	go func() {
-		defer wg.Done()
-		mykdtree.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
-	}()
+	// 3.kdtree
+	result, err = mykdtree.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
+	if err != nil || len(result) < 1 {
+		return err
+	}
 
-	// 5.orm
-	go func() {
-		defer wg.Done()
-		//myorm.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
-	}()
+	// 4.orm
+	result, err = myorm.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
+	if err != nil || len(result) < 1 {
+		return err
+	}
 
-	// 6.query
-	go func() {
-		defer wg.Done()
-		myquery.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
-	}()
-
-	wg.Wait()
+	// 5.query
+	result, err = myquery.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
+	if err != nil || len(result) < 1 {
+		return err
+	}
 
 	return nil
 }
 
 // PositionAddressInfo Data 특정 조건의 값들 가져오기
-func ServiceReads(PositionAddressInfo models.PositionAddressInfo) error {
+func ServiceReads(PositionAddressInfo models.Positionaddressinfo) error {
 	var wg = sync.WaitGroup{}
 	wg.Add(6)
 
@@ -187,7 +225,7 @@ func ServiceReads(PositionAddressInfo models.PositionAddressInfo) error {
 	return nil
 }
 
-func ServiceUpdate(PositionAddressInfo models.PositionAddressInfo) error {
+func ServiceUpdate(PositionAddressInfo models.Positionaddressinfo) error {
 
 	// 1.slice
 	myslice.PositionAddressInfo.PositionAddressInfoUpdate(PositionAddressInfo)
@@ -209,7 +247,7 @@ func ServiceUpdate(PositionAddressInfo models.PositionAddressInfo) error {
 	return nil
 }
 
-func ServiceDelete(PositionAddressInfo models.PositionAddressInfo) error {
+func ServiceDelete(PositionAddressInfo models.Positionaddressinfo) error {
 
 	// 1.slice
 	myslice.PositionAddressInfo.PositionAddressInfoDelete(PositionAddressInfo)

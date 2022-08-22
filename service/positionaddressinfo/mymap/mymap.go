@@ -8,57 +8,59 @@ import (
 var PositionAddressInfo ULMap
 
 type ULMap struct {
-	PositionAddressInfoMap map[string]models.PositionAddressInfo
+	PositionAddressInfoMap map[string]models.Positionaddressinfo
 }
 
-func (ULM *ULMap) PositionAddressInfosInit(rows map[string]models.PositionAddressInfo) error {
+func (ULM *ULMap) PositionAddressInfoInit(rows map[string]models.Positionaddressinfo) error {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 
 	if rows == nil {
-		return log.MyError("Error_PositionAddressInfosInit")
+		return log.MyError("Error_PositionAddressInfoInit")
 	}
 	ULM.PositionAddressInfoMap = rows
 
 	return nil
 }
 
-func (ULM *ULMap) PositionAddressInfoInsert(ul models.PositionAddressInfo) error {
+func (ULM *ULMap) PositionAddressInfoInsert(ul models.Positionaddressinfo) error {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 
-	ULM.PositionAddressInfoMap[ul.UserCode] = ul
+	ULM.PositionAddressInfoMap[ul.Usercode] = ul
 
 	data, err := ULM.PositionAddressInfoRead(ul)
-	if data.UserCode == "" || err != nil {
+	if len(data) < 1 || err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (ULM *ULMap) PositionAddressInfoRead(ul models.PositionAddressInfo) (models.PositionAddressInfo, error) {
+func (ULM *ULMap) PositionAddressInfoRead(ul models.Positionaddressinfo) ([]models.Positionaddressinfo, error) {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
+	var rows []models.Positionaddressinfo
 
-	row := ULM.PositionAddressInfoMap[ul.UserCode]
-	if row.UserCode == "" {
-		return row, log.MyError("NotFound")
+	row := ULM.PositionAddressInfoMap[ul.Usercode]
+	if row.Usercode != "" {
+		rows = append(rows, row)
+		return rows, nil
 	}
-	return row, nil
+	return rows, log.MyError("NotFound")
 }
 
-func (ULM *ULMap) PositionAddressInfoUpdate(ul models.PositionAddressInfo) (bool, error) {
+func (ULM *ULMap) PositionAddressInfoUpdate(ul models.Positionaddressinfo) (bool, error) {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
-	var row models.PositionAddressInfo
+	var row models.Positionaddressinfo
 	for _, row = range ULM.PositionAddressInfoMap {
-		if row.UserCode == ul.UserCode {
-			row.LocLatitude = ul.LocLatitude
-			row.LocLongtitude = ul.LocLongtitude
+		if row.Usercode == ul.Usercode {
+			row.Loclatitude = ul.Loclatitude
+			row.Loclongtitude = ul.Loclongtitude
 			return true, nil
 		}
 	}
 	return false, log.MyError("NotFound")
 }
 
-func (ULM *ULMap) PositionAddressInfoDelete(ul models.PositionAddressInfo) (bool, error) {
+func (ULM *ULMap) PositionAddressInfoDelete(ul models.Positionaddressinfo) (bool, error) {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 	return false, nil
 }

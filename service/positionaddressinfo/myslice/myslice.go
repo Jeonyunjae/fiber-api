@@ -9,60 +9,62 @@ import (
 var PositionAddressInfo ULSlice
 
 type ULSlice struct {
-	PositionAddressInfoSlice []models.PositionAddressInfo
+	PositionAddressInfoSlice []models.Positionaddressinfo
 }
 
-func (ULL *ULSlice) PositionAddressInfosInit(rows []models.PositionAddressInfo) error {
+func (ULL *ULSlice) PositionAddressInfoInit(rows []models.Positionaddressinfo) error {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 	if rows == nil {
-		return log.MyError("Error_PositionAddressInfosInit")
+		return log.MyError("Error_PositionAddressInfoInit")
 	}
 	ULL.PositionAddressInfoSlice = rows
 
 	return nil
 }
 
-func (ULL *ULSlice) PositionAddressInfoInsert(ul models.PositionAddressInfo) error {
+func (ULL *ULSlice) PositionAddressInfoInsert(ul models.Positionaddressinfo) error {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 
 	ULL.PositionAddressInfoSlice = append(ULL.PositionAddressInfoSlice, ul)
 
 	data, err := ULL.PositionAddressInfoRead(ul)
-	if data.UserCode == "" || err != nil {
+	if len(data) < 1 || err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (ULL *ULSlice) PositionAddressInfoRead(ul models.PositionAddressInfo) (models.PositionAddressInfo, error) {
+func (ULL *ULSlice) PositionAddressInfoRead(ul models.Positionaddressinfo) ([]models.Positionaddressinfo, error) {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
-	var row models.PositionAddressInfo
+	var rows []models.Positionaddressinfo
+	var row models.Positionaddressinfo
 
 	for _, row = range ULL.PositionAddressInfoSlice {
-		if row.UserCode == ul.UserCode {
-			row.LocLatitude = ul.LocLatitude
-			row.LocLongtitude = ul.LocLongtitude
-			return row, nil
+		if row.Usercode == ul.Usercode {
+			row.Loclatitude = ul.Loclatitude
+			row.Loclongtitude = ul.Loclongtitude
+			rows = append(rows, row)
+			return rows, nil
 		}
 	}
-	return row, log.MyError("Error_PositionAddressInfoRead")
+	return rows, log.MyError("Error_PositionAddressInfoRead")
 }
 
-func (ULL *ULSlice) PositionAddressInfoUpdate(ul models.PositionAddressInfo) models.PositionAddressInfo {
+func (ULL *ULSlice) PositionAddressInfoUpdate(ul models.Positionaddressinfo) models.Positionaddressinfo {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
-	var row models.PositionAddressInfo
+	var row models.Positionaddressinfo
 	for _, row = range ULL.PositionAddressInfoSlice {
-		if row.UserCode == ul.UserCode {
-			row.LocLatitude = ul.LocLatitude
-			row.LocLongtitude = ul.LocLongtitude
+		if row.Usercode == ul.Usercode {
+			row.Loclatitude = ul.Loclatitude
+			row.Loclongtitude = ul.Loclongtitude
 			return row
 		}
 	}
 	return row
 }
 
-func (ULL *ULSlice) PositionAddressInfoDelete(ul models.PositionAddressInfo) ULSlice {
+func (ULL *ULSlice) PositionAddressInfoDelete(ul models.Positionaddressinfo) ULSlice {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 	ULL.PositionAddressInfoSlice = util.PositionAddressInfoCsvToStruct()
 	return *ULL

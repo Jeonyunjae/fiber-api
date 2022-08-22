@@ -20,5 +20,4 @@ func main() {
 	service.ServiceInit()
 
 	log.Fatal(app.Listen(":3000"))
-
 }

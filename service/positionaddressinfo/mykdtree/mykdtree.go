@@ -15,10 +15,10 @@ type ULKDTree struct {
 	PositionAddressInfoKdTree kdtree.KDTree
 }
 
-func (ULKDT *ULKDTree) PositionAddressInfosInit(rows map[string]models.PositionAddressInfo) error {
+func (ULKDT *ULKDTree) PositionAddressInfoInit(rows map[string]models.Positionaddressinfo) error {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 	if rows == nil {
-		return log.MyError("Error_PositionAddressInfosInit")
+		return log.MyError("Error_PositionAddressInfoInit")
 	}
 
 	PositionAddressInfo = PositionAddressInfo.PositionAddressInfoMapToKDTree(rows)
@@ -27,59 +27,68 @@ func (ULKDT *ULKDTree) PositionAddressInfosInit(rows map[string]models.PositionA
 
 func (ULKDT *ULKDTree) PositionAddressInfoArrayToKDTree(data [][]string) ULKDTree {
 	for _, row := range data {
-		var PositionAddressInfo models.PositionAddressInfo
-		PositionAddressInfo.UserCode = row[0]
-		PositionAddressInfo.LocLatitude, _ = strconv.ParseFloat(row[2], 64)
-		PositionAddressInfo.LocLongtitude, _ = strconv.ParseFloat(row[3], 64)
+		var PositionAddressInfo models.Positionaddressinfo
+		PositionAddressInfo.Usercode = row[0]
+		PositionAddressInfo.Loclatitude, _ = strconv.ParseFloat(row[2], 64)
+		PositionAddressInfo.Loclongtitude, _ = strconv.ParseFloat(row[3], 64)
 		ULKDT.PositionAddressInfoKdTree.Insert(
 			points.NewPoint(
-				[]float64{PositionAddressInfo.LocLongtitude, PositionAddressInfo.LocLatitude, 0}, PositionAddressInfo))
+				[]float64{PositionAddressInfo.Loclongtitude, PositionAddressInfo.Loclatitude}, PositionAddressInfo))
 	}
 
 	return *ULKDT
 }
 
-func (ULKDT *ULKDTree) PositionAddressInfoMapToKDTree(rows map[string]models.PositionAddressInfo) ULKDTree {
+func (ULKDT *ULKDTree) PositionAddressInfoMapToKDTree(rows map[string]models.Positionaddressinfo) ULKDTree {
 	for _, row := range rows {
-		ULKDT.PositionAddressInfoKdTree.Insert(
-			points.NewPoint(
-				[]float64{row.LocLongtitude, row.LocLatitude, 0}, row))
 
+		point := ULKDT.PositionAddressInfoKdTree.Find(points.NewPoint(
+			[]float64{row.Loclongtitude, row.Loclatitude}, row))
+
+		if point == nil {
+			ULKDT.PositionAddressInfoKdTree.Insert(
+				points.NewPoint(
+					[]float64{row.Loclongtitude, row.Loclatitude}, row))
+		}
 	}
-
 	return *ULKDT
 }
 
-func (ULKDT *ULKDTree) PositionAddressInfoInsert(ul models.PositionAddressInfo) error {
+func (ULKDT *ULKDTree) PositionAddressInfoInsert(ul models.Positionaddressinfo) error {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 
 	ULKDT.PositionAddressInfoKdTree.Insert(
 		points.NewPoint(
-			[]float64{ul.LocLongtitude, ul.LocLatitude, 0}, ul))
+			[]float64{ul.Loclongtitude, ul.Loclatitude}, ul))
 
 	data, err := ULKDT.PositionAddressInfoRead(ul)
-	if data.UserCode == "" || err != nil {
+	if len(data) < 1 || err != nil {
 		return err
 	}
 	return nil
 }
 
-func (ULKDT *ULKDTree) PositionAddressInfoRead(PositionAddressInfo models.PositionAddressInfo) (models.PositionAddressInfo, error) {
+func (ULKDT *ULKDTree) PositionAddressInfoRead(ul models.Positionaddressinfo) ([]models.Positionaddressinfo, error) {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
+	var result []models.Positionaddressinfo
+	nodes := ULKDT.PositionAddressInfoKdTree.Find(&points.Point2D{Y: ul.Loclatitude, X: ul.Loclongtitude})
 
-	var data = models.PositionAddressInfo{UserCode: "11111", LocLatitude: 1, LocLongtitude: 1}
-	ULKDT.PositionAddressInfoKdTree.Find(&points.Point2D{X: 36.458658, Y: 128.891228})
+	if nodes == nil {
+		return nil, log.MyError("Error_PositionAddressInfoRead")
+	}
+	value := nodes.(*points.Point).Data.(models.Positionaddressinfo)
+	result = append(result, models.Positionaddressinfo{Usercode: value.Usercode, Loclongtitude: value.Loclongtitude, Loclatitude: value.Loclatitude})
 
-	return data, nil
+	return result, nil
 }
 
-func (ULKDT *ULKDTree) PositionAddressInfoUpdate(PositionAddressInfo models.PositionAddressInfo) ULKDTree {
+func (ULKDT *ULKDTree) PositionAddressInfoUpdate(PositionAddressInfo models.Positionaddressinfo) ULKDTree {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 
 	return *ULKDT
 }
 
-func (ULKDT *ULKDTree) PositionAddressInfoDelete(PositionAddressInfo models.PositionAddressInfo) ULKDTree {
+func (ULKDT *ULKDTree) PositionAddressInfoDelete(PositionAddressInfo models.Positionaddressinfo) ULKDTree {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 
 	return *ULKDT

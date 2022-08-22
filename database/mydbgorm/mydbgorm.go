@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/BurntSushi/toml"
+	"github.com/jeonyunjae/fiber-api/models"
 	"github.com/jeonyunjae/fiber-api/util/config"
 	"github.com/jeonyunjae/fiber-api/util/log"
 	"gorm.io/driver/postgres"
@@ -26,7 +27,7 @@ func ConnectDb() {
 			dbStruct.Entity.Host,
 			dbStruct.Entity.User,
 			dbStruct.Entity.Password,
-			dbStruct.Entity.DbName,
+			dbStruct.Entity.DbName_Gorm,
 			dbStruct.Entity.Port)
 
 		// open database
@@ -39,7 +40,7 @@ func ConnectDb() {
 		db.Logger = logger.Default.LogMode(logger.Info)
 		//log.MyLog("Running Migrations")
 		//TODO: Add migrations
-		//db.AutoMigrate(&models.PositionAddressInfo{})
+		db.AutoMigrate(&models.Positionaddressinfo{})
 		Database = DBInstance{Db: db}
 	}
 

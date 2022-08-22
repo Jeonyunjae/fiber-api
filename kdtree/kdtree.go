@@ -86,7 +86,8 @@ func (t *KDTree) Insert(p Point) {
 	}
 }
 
-func (t *KDTree) InsertAdd(p Point) {
+// Insert adds a point to the k-d tree.
+func (t *KDTree) Update(p Point) {
 	if t.root == nil {
 		t.root = &node{Point: p}
 	} else {
@@ -308,7 +309,25 @@ func (n *node) Insert(p Point, axis int) {
 			n.Right.Insert(p, (axis+1)%n.Point.Dimensions())
 		}
 	} else {
-		n.Point.
+		n.Point = p
+	}
+}
+
+func (n *node) Update(p Point, axis int) {
+	if p.Dimension(axis) < n.Point.Dimension(axis) {
+		if n.Left == nil {
+			n.Left = &node{Point: p}
+		} else {
+			n.Left.Update(p, (axis+1)%n.Point.Dimensions())
+		}
+	} else if p.Dimension(axis) > n.Point.Dimension(axis) {
+		if n.Right == nil {
+			n.Right = &node{Point: p}
+		} else {
+			n.Right.Update(p, (axis+1)%n.Point.Dimensions())
+		}
+	} else {
+		n.Point = p
 	}
 }
 

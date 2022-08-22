@@ -33,6 +33,10 @@ func NewPoint(coordinates []float64, data interface{}) *Point {
 	}
 }
 
+func (p *Point) GetData() interface{} {
+	return p.Data
+}
+
 // Dimensions returns the total number of dimensions.
 func (p *Point) Dimensions() int {
 	return len(p.Coordinates)

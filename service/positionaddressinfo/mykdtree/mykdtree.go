@@ -1,8 +1,6 @@
 package mykdtree
 
 import (
-	"strconv"
-
 	"github.com/jeonyunjae/fiber-api/kdtree"
 	"github.com/jeonyunjae/fiber-api/kdtree/points"
 	"github.com/jeonyunjae/fiber-api/models"
@@ -25,31 +23,22 @@ func (ULKDT *ULKDTree) PositionAddressInfoInit(rows map[string]models.Positionad
 	return nil
 }
 
-func (ULKDT *ULKDTree) PositionAddressInfoArrayToKDTree(data [][]string) ULKDTree {
-	for _, row := range data {
-		var PositionAddressInfo models.Positionaddressinfo
-		PositionAddressInfo.Usercode = row[0]
-		PositionAddressInfo.Loclatitude, _ = strconv.ParseFloat(row[2], 64)
-		PositionAddressInfo.Loclongtitude, _ = strconv.ParseFloat(row[3], 64)
-		ULKDT.PositionAddressInfoKdTree.Insert(
-			points.NewPoint(
-				[]float64{PositionAddressInfo.Loclongtitude, PositionAddressInfo.Loclatitude}, PositionAddressInfo))
-	}
-
-	return *ULKDT
-}
-
 func (ULKDT *ULKDTree) PositionAddressInfoMapToKDTree(rows map[string]models.Positionaddressinfo) ULKDTree {
 	for _, row := range rows {
-
+		var inRes []models.Positionaddressinfo
 		point := ULKDT.PositionAddressInfoKdTree.Find(points.NewPoint(
 			[]float64{row.Loclongtitude, row.Loclatitude}, row))
 
-		if point == nil {
-			ULKDT.PositionAddressInfoKdTree.Insert(
-				points.NewPoint(
-					[]float64{row.Loclongtitude, row.Loclatitude}, row))
+		if point != nil {
+			inRes = point.(*points.Point).Data.([]models.Positionaddressinfo)
+			inRes = append(inRes, row)
+		} else {
+			inRes = append(inRes, row)
 		}
+
+		ULKDT.PositionAddressInfoKdTree.Insert(
+			points.NewPoint(
+				[]float64{row.Loclongtitude, row.Loclatitude}, inRes))
 	}
 	return *ULKDT
 }

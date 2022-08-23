@@ -105,50 +105,6 @@ func ServiceInsert(PositionAddressInfo models.Positionaddressinfo) error {
 	return nil
 }
 
-// PositionAddressInfo Data 특정 하나 가져오기
-// func ServiceRead(PositionAddressInfo models.Positionaddressinfo) error {
-// 	var wg = sync.WaitGroup{}
-// 	wg.Add(6)
-
-// 	// 1.slice
-// 	go func() {
-// 		defer wg.Done()
-// 		result, err := myslice.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
-// 		if err != nil || len(result) < 1 {
-// 			return err
-// 		}
-// 	}()
-// 	// 2.decimaltree
-
-// 	//3.map
-// 	go func() {
-// 		defer wg.Done()
-// 		mymap.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
-
-// 	}()
-// 	// 4.kdtree
-// 	go func() {
-// 		defer wg.Done()
-// 		mykdtree.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
-// 	}()
-
-// 	// 5.orm
-// 	go func() {
-// 		defer wg.Done()
-// 		//myorm.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
-// 	}()
-
-// 	// 6.query
-// 	go func() {
-// 		defer wg.Done()
-// 		myquery.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
-// 	}()
-
-// 	wg.Wait()
-
-// 	return nil
-// }
-
 func ServiceRead(PositionAddressInfo models.Positionaddressinfo) error {
 
 	// 1.slice
@@ -226,45 +182,69 @@ func ServiceReads(PositionAddressInfo models.Positionaddressinfo) error {
 }
 
 func ServiceUpdate(PositionAddressInfo models.Positionaddressinfo) error {
-
 	// 1.slice
-	myslice.PositionAddressInfo.PositionAddressInfoUpdate(PositionAddressInfo)
+	result, err := myslice.PositionAddressInfo.PositionAddressInfoUpdate(PositionAddressInfo)
+	if err != nil || result == false {
+		return err
+	}
 
-	// 2.decimaltree
+	// 2.map
+	result, err = mymap.PositionAddressInfo.PositionAddressInfoUpdate(PositionAddressInfo)
+	if err != nil || result == false {
+		return err
+	}
 
-	//3.map
-	mymap.PositionAddressInfo.PositionAddressInfoUpdate(PositionAddressInfo)
+	// 3.kdtree
+	result, err = mykdtree.PositionAddressInfo.PositionAddressInfoUpdate(PositionAddressInfo)
+	if err != nil || result == false {
+		return err
+	}
 
-	// 4.kdtree
-	mykdtree.PositionAddressInfo.PositionAddressInfoUpdate(PositionAddressInfo)
+	// 4.orm
+	result, err = myorm.PositionAddressInfo.PositionAddressInfoUpdate(PositionAddressInfo)
+	if err != nil || result == false {
+		return err
+	}
 
-	// 5.orm
-	myorm.PositionAddressInfo.PositionAddressInfoUpdate(PositionAddressInfo)
-
-	// 6.query
-	myquery.PositionAddressInfo.PositionAddressInfoUpdate(PositionAddressInfo)
+	// 5.query
+	result, err = myquery.PositionAddressInfo.PositionAddressInfoUpdate(PositionAddressInfo)
+	if err != nil || result == false {
+		return err
+	}
 
 	return nil
 }
 
 func ServiceDelete(PositionAddressInfo models.Positionaddressinfo) error {
-
 	// 1.slice
-	myslice.PositionAddressInfo.PositionAddressInfoDelete(PositionAddressInfo)
+	result, err := myslice.PositionAddressInfo.PositionAddressInfoDelete(PositionAddressInfo)
+	if err != nil || result == false {
+		return err
+	}
 
-	// 2.decimaltree
+	// 2.map
+	result, err = mymap.PositionAddressInfo.PositionAddressInfoDelete(PositionAddressInfo)
+	if err != nil || result == false {
+		return err
+	}
 
-	//3.map
-	mymap.PositionAddressInfo.PositionAddressInfoDelete(PositionAddressInfo)
+	// 3.kdtree
+	result, err = mykdtree.PositionAddressInfo.PositionAddressInfoDelete(PositionAddressInfo)
+	if err != nil || result == false {
+		return err
+	}
 
-	// 4.kdtree
-	mykdtree.PositionAddressInfo.PositionAddressInfoDelete(PositionAddressInfo)
+	// 4.orm
+	result, err = myorm.PositionAddressInfo.PositionAddressInfoDelete(PositionAddressInfo)
+	if err != nil || result == false {
+		return err
+	}
 
-	// 5.orm
-	myorm.PositionAddressInfo.PositionAddressInfoDelete(PositionAddressInfo)
-
-	// 6.query
-	myquery.PositionAddressInfo.PositionAddressInfoDelete(PositionAddressInfo)
+	// 5.query
+	result, err = myquery.PositionAddressInfo.PositionAddressInfoDelete(PositionAddressInfo)
+	if err != nil || result == false {
+		return err
+	}
 
 	return nil
 }

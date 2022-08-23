@@ -1,8 +1,8 @@
 package mykdtree
 
 import (
-	"github.com/jeonyunjae/fiber-api/kdtree"
-	"github.com/jeonyunjae/fiber-api/kdtree/points"
+	"github.com/jeonyunjae/fiber-api/datatype/kdtree"
+	"github.com/jeonyunjae/fiber-api/datatype/kdtree/points"
 	"github.com/jeonyunjae/fiber-api/models"
 	"github.com/jeonyunjae/fiber-api/util/log"
 )
@@ -57,28 +57,43 @@ func (ULKDT *ULKDTree) PositionAddressInfoInsert(ul models.Positionaddressinfo) 
 	return nil
 }
 
-func (ULKDT *ULKDTree) PositionAddressInfoRead(ul models.Positionaddressinfo) ([]models.Positionaddressinfo, error) {
+func (ULKDT *ULKDTree) PositionAddressInfoRead(ul models.Positionaddressinfo) (map[string]models.Positionaddressinfo, error) {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
-	var result []models.Positionaddressinfo
+	rows := make(map[string]models.Positionaddressinfo)
 	nodes := ULKDT.PositionAddressInfoKdTree.Find(&points.Point2D{Y: ul.Loclatitude, X: ul.Loclongtitude})
 
 	if nodes == nil {
 		return nil, log.MyError("Error_PositionAddressInfoRead")
 	}
 	value := nodes.(*points.Point).Data.(models.Positionaddressinfo)
-	result = append(result, models.Positionaddressinfo{Usercode: value.Usercode, Loclongtitude: value.Loclongtitude, Loclatitude: value.Loclatitude})
 
-	return result, nil
+	rows[value.Usercode] = models.Positionaddressinfo{Usercode: value.Usercode, Loclongtitude: value.Loclongtitude, Loclatitude: value.Loclatitude}
+
+	return rows, nil
 }
 
-func (ULKDT *ULKDTree) PositionAddressInfoUpdate(PositionAddressInfo models.Positionaddressinfo) ULKDTree {
+func (ULKDT *ULKDTree) PositionAddressInfoUpdate(ul models.Positionaddressinfo) (bool, error) {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 
-	return *ULKDT
+	_, err := ULKDT.PositionAddressInfoDelete(ul)
+
+	if err != nil {
+		return false, log.MyError("Error_PositionAddressInfoUpdate")
+	}
+
+	err = ULKDT.PositionAddressInfoInsert(ul)
+	if err != nil {
+		return false, log.MyError("Error_PositionAddressInfoUpdate")
+	}
+
+	return true, nil
 }
 
-func (ULKDT *ULKDTree) PositionAddressInfoDelete(PositionAddressInfo models.Positionaddressinfo) ULKDTree {
+func (ULKDT *ULKDTree) PositionAddressInfoDelete(ul models.Positionaddressinfo) (bool, error) {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 
-	return *ULKDT
+	ULKDT.PositionAddressInfoKdTree.Remove(points.NewPoint(
+		[]float64{ul.Loclongtitude, ul.Loclatitude}, ul))
+
+	return true, nil
 }

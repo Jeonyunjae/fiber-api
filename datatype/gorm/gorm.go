@@ -1,4 +1,4 @@
-package mydbgorm
+package gorm
 
 import (
 	"fmt"

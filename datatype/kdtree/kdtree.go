@@ -22,7 +22,7 @@ import (
 	"math"
 	"sort"
 
-	"github.com/jeonyunjae/fiber-api/kdtree/kdrange"
+	"github.com/jeonyunjae/fiber-api/datatype/kdtree/kdrange"
 	pq "github.com/kyroy/priority-queue"
 )
 

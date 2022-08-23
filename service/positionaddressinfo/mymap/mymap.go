@@ -35,13 +35,13 @@ func (ULM *ULMap) PositionAddressInfoInsert(ul models.Positionaddressinfo) error
 	return nil
 }
 
-func (ULM *ULMap) PositionAddressInfoRead(ul models.Positionaddressinfo) ([]models.Positionaddressinfo, error) {
+func (ULM *ULMap) PositionAddressInfoRead(ul models.Positionaddressinfo) (map[string]models.Positionaddressinfo, error) {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
-	var rows []models.Positionaddressinfo
+	rows := make(map[string]models.Positionaddressinfo)
 
 	row := ULM.PositionAddressInfoMap[ul.Usercode]
 	if row.Usercode != "" {
-		rows = append(rows, row)
+		rows[row.Usercode] = row
 		return rows, nil
 	}
 	return rows, log.MyError("NotFound")
@@ -49,18 +49,24 @@ func (ULM *ULMap) PositionAddressInfoRead(ul models.Positionaddressinfo) ([]mode
 
 func (ULM *ULMap) PositionAddressInfoUpdate(ul models.Positionaddressinfo) (bool, error) {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
-	var row models.Positionaddressinfo
-	for _, row = range ULM.PositionAddressInfoMap {
-		if row.Usercode == ul.Usercode {
-			row.Loclatitude = ul.Loclatitude
-			row.Loclongtitude = ul.Loclongtitude
-			return true, nil
-		}
-	}
-	return false, log.MyError("NotFound")
+	// var row models.Positionaddressinfo
+	// for _, row = range ULM.PositionAddressInfoMap {
+	// 	if row.Usercode == ul.Usercode {
+	// 		row.Loclatitude = ul.Loclatitude
+	// 		row.Loclongtitude = ul.Loclongtitude
+	// 		return true, nil
+	// 	}
+	// }
+
+	ULM.PositionAddressInfoMap[ul.Usercode] = ul
+
+	return true, nil
 }
 
 func (ULM *ULMap) PositionAddressInfoDelete(ul models.Positionaddressinfo) (bool, error) {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
-	return false, nil
+
+	delete(ULM.PositionAddressInfoMap, ul.Usercode)
+
+	return true, nil
 }

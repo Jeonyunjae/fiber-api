@@ -2,7 +2,6 @@ package myslice
 
 import (
 	"github.com/jeonyunjae/fiber-api/models"
-	"github.com/jeonyunjae/fiber-api/service/util"
 	"github.com/jeonyunjae/fiber-api/util/log"
 )
 
@@ -35,37 +34,49 @@ func (ULL *ULSlice) PositionAddressInfoInsert(ul models.Positionaddressinfo) err
 	return nil
 }
 
-func (ULL *ULSlice) PositionAddressInfoRead(ul models.Positionaddressinfo) ([]models.Positionaddressinfo, error) {
+func (ULL *ULSlice) PositionAddressInfoRead(ul models.Positionaddressinfo) (map[string]models.Positionaddressinfo, error) {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
-	var rows []models.Positionaddressinfo
+	rows := make(map[string]models.Positionaddressinfo)
 	var row models.Positionaddressinfo
 
 	for _, row = range ULL.PositionAddressInfoSlice {
 		if row.Usercode == ul.Usercode {
 			row.Loclatitude = ul.Loclatitude
 			row.Loclongtitude = ul.Loclongtitude
-			rows = append(rows, row)
+			rows[row.Usercode] = row
 			return rows, nil
 		}
 	}
 	return rows, log.MyError("Error_PositionAddressInfoRead")
 }
 
-func (ULL *ULSlice) PositionAddressInfoUpdate(ul models.Positionaddressinfo) models.Positionaddressinfo {
+func (ULL *ULSlice) PositionAddressInfoUpdate(ul models.Positionaddressinfo) (bool, error) {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 	var row models.Positionaddressinfo
 	for _, row = range ULL.PositionAddressInfoSlice {
 		if row.Usercode == ul.Usercode {
 			row.Loclatitude = ul.Loclatitude
 			row.Loclongtitude = ul.Loclongtitude
-			return row
+			return true, nil
 		}
 	}
-	return row
+	return false, nil
 }
 
-func (ULL *ULSlice) PositionAddressInfoDelete(ul models.Positionaddressinfo) ULSlice {
+func (ULL *ULSlice) PositionAddressInfoDelete(ul models.Positionaddressinfo) (bool, error) {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
-	ULL.PositionAddressInfoSlice = util.PositionAddressInfoCsvToStruct()
-	return *ULL
+	var index int
+	var row models.Positionaddressinfo
+	for index, row = range ULL.PositionAddressInfoSlice {
+		if row.Usercode == ul.Usercode {
+			break
+		}
+	}
+
+	ULL.PositionAddressInfoSlice = ULL.sliceDeelte(index)
+	return true, nil
+}
+
+func (ULL *ULSlice) sliceDeelte(index int) []models.Positionaddressinfo {
+	return append(ULL.PositionAddressInfoSlice[:index], ULL.PositionAddressInfoSlice[index+1:]...)
 }

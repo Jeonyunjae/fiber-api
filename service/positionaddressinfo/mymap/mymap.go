@@ -1,7 +1,10 @@
 package mymap
 
 import (
+	"sort"
+
 	"github.com/jeonyunjae/fiber-api/models"
+	"github.com/jeonyunjae/fiber-api/service/util"
 	"github.com/jeonyunjae/fiber-api/util/log"
 )
 
@@ -44,7 +47,27 @@ func (ULM *ULMap) PositionAddressInfoRead(ul models.Positionaddressinfo) (map[st
 		rows[row.Usercode] = row
 		return rows, nil
 	}
+
 	return rows, log.MyError("NotFound")
+}
+
+func (ULM *ULMap) PositionAddressInfoReads(ul models.PositionaddressDistanceInfo) ([]models.PositionaddressDistanceInfo, error) {
+	defer log.ElapsedTime(log.TraceFn(), "start")()
+	var sortData []models.PositionaddressDistanceInfo
+
+	for _, row := range ULM.PositionAddressInfoMap {
+		distance := util.Distance(ul.Loclongtitude, row.Loclongtitude, ul.Loclatitude, row.Loclatitude)
+		sortData = append(sortData, models.PositionaddressDistanceInfo{Usercode: row.Usercode, Loclatitude: row.Loclatitude, Loclongtitude: row.Loclongtitude, Distance: distance})
+	}
+	sort.Slice(sortData, func(i, j int) bool {
+		return sortData[i].Distance < sortData[j].Distance
+	})
+	tempCount := ul.Count
+	if len(sortData) < tempCount {
+		tempCount = len(sortData)
+	}
+	sortData = sortData[:tempCount]
+	return sortData, nil
 }
 
 func (ULM *ULMap) PositionAddressInfoUpdate(ul models.Positionaddressinfo) (bool, error) {

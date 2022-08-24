@@ -37,7 +37,7 @@ func ConnectDb() {
 		}
 		Database = DBInstance{Db: db}
 
-		defer Database.close()
+		//defer Database.close()
 		//Database.ping() //만약 db연결이 실패할 경우 왜 실패한건지 에러찍는 용도
 		if err != nil || db.Ping() != nil {
 			panic(err.Error())
@@ -46,7 +46,7 @@ func ConnectDb() {
 }
 
 func (DBInstance *DBInstance) close() {
-	DBInstance.Db.Close()
+	//DBInstance.Db.Close()
 }
 
 func (DBInstance *DBInstance) Select(sql string) (*sql.Rows, error) {

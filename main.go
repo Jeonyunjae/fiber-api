@@ -4,15 +4,15 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/jeonyunjae/fiber-api/database/mydbquery"
 	"github.com/jeonyunjae/fiber-api/datatype/gorm"
+	"github.com/jeonyunjae/fiber-api/datatype/query"
 	"github.com/jeonyunjae/fiber-api/routes"
 	"github.com/jeonyunjae/fiber-api/service"
 )
 
 func main() {
 	gorm.ConnectDb()
-	mydbquery.ConnectDb()
+	query.ConnectDb()
 
 	app := fiber.New()
 

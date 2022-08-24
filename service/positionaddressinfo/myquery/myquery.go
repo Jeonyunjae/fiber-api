@@ -18,7 +18,7 @@ type ULQuery struct {
 func (ULQ *ULQuery) PositionAddressInfoInit() error {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 
-	if PositionAddressInfo.PositionAddressInfoQuery.Db == nil {
+	if query.Database.Db == nil {
 		return log.MyError("Error_PositionAddressInfoInit")
 	}
 	PositionAddressInfo.PositionAddressInfoQuery = query.Database
@@ -58,12 +58,30 @@ func (ULQ *ULQuery) PositionAddressInfoRead(ul models.Positionaddressinfo) (map[
 	if err != nil {
 		return nil, err
 	}
-	m, err := dataScan(rows)
+	m, err := dataScanByPositionAddressInfo(rows)
 	if err != nil {
 		return m, log.MyError("Error_PositionAddressInfoAllRead")
 	}
 
 	return nil, nil
+}
+
+func (ULQ *ULQuery) PositionAddressInfoReads(ul models.PositionaddressDistanceInfo) ([]models.PositionaddressDistanceInfo, error) {
+	defer log.ElapsedTime(log.TraceFn(), "start")()
+	//m := make(map[string]models.Positionaddressinfo)
+
+	var sql = fmt.Sprintf(`select usercode, loclatitude,loclongtitude ,earth_distance(ll_to_earth(loclatitude, loclongtitude), ll_to_earth(%f, %f)) as distance from public.positionaddressinfos order by distance asc limit %d`, ul.Loclatitude, ul.Loclongtitude, ul.Count)
+
+	rows, err := ULQ.PositionAddressInfoQuery.Select(sql)
+	if err != nil {
+		return nil, err
+	}
+	m, err := dataScanByPositionAddressDistanceInfo(rows)
+	if err != nil {
+		return m, log.MyError("Error_PositionAddressInfoAllRead")
+	}
+
+	return m, nil
 }
 
 func (ULQ *ULQuery) PositionAddressInfoAllRead() (map[string]models.Positionaddressinfo, error) {
@@ -77,14 +95,14 @@ func (ULQ *ULQuery) PositionAddressInfoAllRead() (map[string]models.Positionaddr
 		return nil, err
 	}
 
-	m, err := dataScan(rows)
+	m, err := dataScanByPositionAddressInfo(rows)
 	if err != nil {
 		return m, log.MyError("Error_PositionAddressInfoAllRead")
 	}
 	return m, nil
 }
 
-func dataScan(rows *sql.Rows) (map[string]models.Positionaddressinfo, error) {
+func dataScanByPositionAddressInfo(rows *sql.Rows) (map[string]models.Positionaddressinfo, error) {
 	var userCode string
 	var locLatitude, locLongtitude float64
 
@@ -100,30 +118,19 @@ func dataScan(rows *sql.Rows) (map[string]models.Positionaddressinfo, error) {
 	return m, nil
 }
 
-func (ULQ *ULQuery) PositionAddressInfoAllReads(args ...any) (map[string]models.Positionaddressinfo, error) {
-	defer log.ElapsedTime(log.TraceFn(), "start")()
-
+func dataScanByPositionAddressDistanceInfo(rows *sql.Rows) ([]models.PositionaddressDistanceInfo, error) {
 	var userCode string
-	var locLatitude, locLongtitude float64
+	var locLatitude, locLongtitude, distance float64
 
-	m := make(map[string]models.Positionaddressinfo)
-	var sql string = `SELECT "userCode",earth_distance(ll_to_earth("locLatitude","locLongtitude"),ll_to_earth(37.482325, 126.881754))
-		FROM public."PositionAddressInfo" ORDER BY earth_distance DESC`
-
-	rows, err := ULQ.PositionAddressInfoQuery.Select(sql)
-
-	if err != nil {
-		return nil, err
-	}
+	var m []models.PositionaddressDistanceInfo
 
 	for rows.Next() {
-		err = rows.Scan(&userCode, &locLatitude, &locLongtitude)
+		err := rows.Scan(&userCode, &locLatitude, &locLongtitude, &distance)
 		if err != nil {
-			return m, log.MyError("Error_PositionAddressInfoAllReads")
+			return m, log.MyError("Error_dataScan")
 		}
-		m[userCode] = models.Positionaddressinfo{Usercode: userCode, Loclatitude: locLatitude, Loclongtitude: locLongtitude}
+		m = append(m, models.PositionaddressDistanceInfo{Usercode: userCode, Loclatitude: locLatitude, Loclongtitude: locLongtitude, Distance: distance})
 	}
-
 	return m, nil
 }
 

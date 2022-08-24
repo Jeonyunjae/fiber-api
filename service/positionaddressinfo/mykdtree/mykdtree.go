@@ -1,6 +1,8 @@
 package mykdtree
 
 import (
+	"fmt"
+
 	"github.com/jeonyunjae/fiber-api/datatype/kdtree"
 	"github.com/jeonyunjae/fiber-api/datatype/kdtree/points"
 	"github.com/jeonyunjae/fiber-api/models"
@@ -24,6 +26,7 @@ func (ULKDT *ULKDTree) PositionAddressInfoInit(rows map[string]models.Positionad
 }
 
 func (ULKDT *ULKDTree) PositionAddressInfoMapToKDTree(rows map[string]models.Positionaddressinfo) ULKDTree {
+	var num int
 	for _, row := range rows {
 		var inRes []models.Positionaddressinfo
 		point := ULKDT.PositionAddressInfoKdTree.Find(points.NewPoint(
@@ -39,6 +42,9 @@ func (ULKDT *ULKDTree) PositionAddressInfoMapToKDTree(rows map[string]models.Pos
 		ULKDT.PositionAddressInfoKdTree.Insert(
 			points.NewPoint(
 				[]float64{row.Loclongtitude, row.Loclatitude}, inRes))
+
+		log.MyLog(fmt.Sprintf("%d==%s", num, row.Usercode))
+		num = num +1
 	}
 	return *ULKDT
 }
@@ -65,9 +71,39 @@ func (ULKDT *ULKDTree) PositionAddressInfoRead(ul models.Positionaddressinfo) (m
 	if nodes == nil {
 		return nil, log.MyError("Error_PositionAddressInfoRead")
 	}
+
 	value := nodes.(*points.Point).Data.(models.Positionaddressinfo)
 
 	rows[value.Usercode] = models.Positionaddressinfo{Usercode: value.Usercode, Loclongtitude: value.Loclongtitude, Loclatitude: value.Loclatitude}
+
+	return rows, nil
+}
+
+func (ULKDT *ULKDTree) PositionAddressInfoReads(ul models.PositionaddressDistanceInfo) ([]models.PositionaddressDistanceInfo, error) {
+	defer log.ElapsedTime(log.TraceFn(), "start")()
+	var rows []models.PositionaddressDistanceInfo
+	nodes := ULKDT.PositionAddressInfoKdTree.KNN(&points.Point{Coordinates: []float64{ul.Loclatitude, ul.Loclongtitude}}, 100)
+
+	if nodes == nil {
+		return nil, log.MyError("Error_PositionAddressInfoRead")
+	}
+	var info models.PositionaddressDistanceInfo
+	var infoTemp models.Positionaddressinfo
+
+	nodeLen := len(nodes)
+	for i := 0; i < nodeLen; i++ {
+		nodeInLen := len(nodes[i].(*points.Point).Data.([]models.Positionaddressinfo))
+
+		for j := 0; j < nodeInLen; j++ {
+			infoTemp = nodes[i].(*points.Point).Data.([]models.Positionaddressinfo)[j]
+			info.Usercode = infoTemp.Usercode
+			info.Loclatitude = infoTemp.Loclatitude
+			info.Loclongtitude = infoTemp.Loclongtitude
+
+			rows = append(rows, info)
+		}
+	}
+	//rows[value.Usercode] = models.Positionaddressinfo{Usercode: value.Usercode, Loclongtitude: value.Loclongtitude, Loclatitude: value.Loclatitude}
 
 	return rows, nil
 }

@@ -1,8 +1,6 @@
 package service
 
 import (
-	"sync"
-
 	"github.com/jeonyunjae/fiber-api/models"
 	"github.com/jeonyunjae/fiber-api/service/positionaddressinfo/mykdtree"
 	"github.com/jeonyunjae/fiber-api/service/positionaddressinfo/mymap"
@@ -105,6 +103,7 @@ func ServiceInsert(PositionAddressInfo models.Positionaddressinfo) error {
 	return nil
 }
 
+//usercode로 정보 가져오기
 func ServiceRead(PositionAddressInfo models.Positionaddressinfo) error {
 
 	// 1.slice
@@ -140,43 +139,37 @@ func ServiceRead(PositionAddressInfo models.Positionaddressinfo) error {
 	return nil
 }
 
-// PositionAddressInfo Data 특정 조건의 값들 가져오기
-func ServiceReads(PositionAddressInfo models.Positionaddressinfo) error {
-	var wg = sync.WaitGroup{}
-	wg.Add(6)
-
+// PositionAddressInfo 가까이 있는 정보 가져오기 100개
+func ServiceReads(PositionAddressDistanceInfo models.PositionaddressDistanceInfo) error {
 	// 1.slice
-	go func() {
-		defer wg.Done()
-		myslice.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
-	}()
-	// 2.decimaltree
+	result, err := myslice.PositionAddressInfo.PositionAddressInfoReads(PositionAddressDistanceInfo)
+	if err != nil || len(result) < 1 {
+		return err
+	}
 
-	//3.map
-	go func() {
-		defer wg.Done()
-		mymap.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
+	// 2.map
+	result, err = mymap.PositionAddressInfo.PositionAddressInfoReads(PositionAddressDistanceInfo)
+	if err != nil || len(result) < 1 {
+		return err
+	}
 
-	}()
-	// 4.kdtree
-	go func() {
-		defer wg.Done()
-		mykdtree.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
-	}()
+	// 3.kdtree
+	result, err = mykdtree.PositionAddressInfo.PositionAddressInfoReads(PositionAddressDistanceInfo)
+	if err != nil || len(result) < 1 {
+		return err
+	}
 
-	// 5.orm
-	go func() {
-		defer wg.Done()
-		myorm.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
-	}()
+	// // 4.orm
+	// result, err = myorm.PositionAddressInfo.PositionAddressInfoRead(PositionAddressDistanceInfo)
+	// if err != nil || len(result) < 1 {
+	// 	return err
+	// }
 
-	// 6.query
-	go func() {
-		defer wg.Done()
-		myquery.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
-	}()
-
-	wg.Wait()
+	// 5.query
+	result, err = myquery.PositionAddressInfo.PositionAddressInfoReads(PositionAddressDistanceInfo)
+	if err != nil || len(result) < 1 {
+		return err
+	}
 
 	return nil
 }

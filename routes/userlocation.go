@@ -10,6 +10,10 @@ func CreateResponsePositionAddressInfo(positionAddressInfo models.Positionaddres
 	return models.Positionaddressinfo{Usercode: positionAddressInfo.Usercode, Loclongtitude: positionAddressInfo.Loclongtitude, Loclatitude: positionAddressInfo.Loclatitude}
 }
 
+func CreateResponsePositionAddressDistanceInfo(positionAddressDistanceInfo models.PositionaddressDistanceInfo) models.PositionaddressDistanceInfo {
+	return models.PositionaddressDistanceInfo{Usercode: positionAddressDistanceInfo.Usercode, Loclongtitude: positionAddressDistanceInfo.Loclongtitude, Loclatitude: positionAddressDistanceInfo.Loclatitude, Distance: positionAddressDistanceInfo.Distance, Count: positionAddressDistanceInfo.Count}
+}
+
 func PositionAddressInfoInsert(c *fiber.Ctx) error {
 	var PositionAddressInfo models.Positionaddressinfo
 
@@ -24,16 +28,16 @@ func PositionAddressInfoInsert(c *fiber.Ctx) error {
 }
 
 func PositionAddressInfoReads(c *fiber.Ctx) error {
-	var PositionAddressInfo models.Positionaddressinfo
+	var PositionaddressDistanceInfo models.PositionaddressDistanceInfo
 
-	if err := c.BodyParser(&PositionAddressInfo); err != nil {
+	if err := c.BodyParser(&PositionaddressDistanceInfo); err != nil {
 		return c.Status(400).JSON(err.Error())
 	}
 
-	service.ServiceReads(PositionAddressInfo)
+	service.ServiceReads(PositionaddressDistanceInfo)
 
-	responsePositionAddressInfo := CreateResponsePositionAddressInfo(PositionAddressInfo)
-	return c.Status(200).JSON(responsePositionAddressInfo)
+	responsePositionAddressDistanceInfo := CreateResponsePositionAddressDistanceInfo(PositionaddressDistanceInfo)
+	return c.Status(200).JSON(responsePositionAddressDistanceInfo)
 }
 
 func PositionAddressInfoRead(c *fiber.Ctx) error {

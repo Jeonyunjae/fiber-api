@@ -60,22 +60,22 @@ func (ULO *ULOrm) PositionAddressInfoAllRead() ([]models.Positionaddressinfo, er
 	return nil, nil
 }
 
-func (ULO *ULOrm) PositionAddressInfoUpdate(ul models.Positionaddressinfo) (bool, error) {
+func (ULO *ULOrm) PositionAddressInfoUpdate(ul models.Positionaddressinfo) error {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 
-	data := ULO.PositionAddressInfoOrm.Db.Model(&models.Positionaddressinfo{}).Updates(ul)
+	data := ULO.PositionAddressInfoOrm.Db.Model(&models.Positionaddressinfo{}).Where("usercode = ?", ul.Usercode).Updates(ul)
 	if data.Error != nil {
-		return false, log.MyError(data.Error.Error())
+		return log.MyError(data.Error.Error())
 	}
-	return true, nil
+	return nil
 }
 
-func (ULO *ULOrm) PositionAddressInfoDelete(ul models.Positionaddressinfo) (bool, error) {
+func (ULO *ULOrm) PositionAddressInfoDelete(ul models.Positionaddressinfo) error {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 	data := ULO.PositionAddressInfoOrm.Db.Where("usercode = ?", ul.Usercode).Delete(&models.Positionaddressinfo{})
 	if data.Error != nil {
-		return false, log.MyError(data.Error.Error())
+		return log.MyError(data.Error.Error())
 	}
 
-	return true, nil
+	return nil
 }

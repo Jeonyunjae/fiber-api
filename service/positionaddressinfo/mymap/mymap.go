@@ -56,7 +56,32 @@ func (ULM *ULMap) PositionAddressInfoReads(ul models.PositionaddressDistanceInfo
 	var sortData []models.PositionaddressDistanceInfo
 
 	for _, row := range ULM.PositionAddressInfoMap {
-		distance := util.Distance(ul.Loclongtitude, row.Loclongtitude, ul.Loclatitude, row.Loclatitude)
+		var data models.PositionaddressDistanceInfo
+		distance := util.GetDistance(ul.Loclongtitude, row.Loclongtitude, ul.Loclatitude, row.Loclatitude)
+
+		data.Usercode = row.Usercode
+		data.Loclongtitude = row.Loclongtitude
+		data.Loclatitude = row.Loclatitude
+		data.Distance = distance
+		sortData = append(sortData, data)
+	}
+	sort.Slice(sortData, func(i, j int) bool {
+		return sortData[i].Distance < sortData[j].Distance
+	})
+	tempCount := ul.Count
+	if len(sortData) < tempCount {
+		tempCount = len(sortData)
+	}
+	sortData = sortData[:tempCount]
+	return sortData, nil
+}
+
+func (ULM *ULMap) PositionAddressInfoReadsRange(ul models.PositionaddressDistanceInfo) ([]models.PositionaddressDistanceInfo, error) {
+	defer log.ElapsedTime(log.TraceFn(), "start")()
+	var sortData []models.PositionaddressDistanceInfo
+
+	for _, row := range ULM.PositionAddressInfoMap {
+		distance := util.GetDistance(ul.Loclongtitude, row.Loclongtitude, ul.Loclatitude, row.Loclatitude)
 		sortData = append(sortData, models.PositionaddressDistanceInfo{Usercode: row.Usercode, Loclatitude: row.Loclatitude, Loclongtitude: row.Loclongtitude, Distance: distance})
 	}
 	sort.Slice(sortData, func(i, j int) bool {
@@ -70,26 +95,18 @@ func (ULM *ULMap) PositionAddressInfoReads(ul models.PositionaddressDistanceInfo
 	return sortData, nil
 }
 
-func (ULM *ULMap) PositionAddressInfoUpdate(ul models.Positionaddressinfo) (bool, error) {
+func (ULM *ULMap) PositionAddressInfoUpdate(ul models.Positionaddressinfo) error {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
-	// var row models.Positionaddressinfo
-	// for _, row = range ULM.PositionAddressInfoMap {
-	// 	if row.Usercode == ul.Usercode {
-	// 		row.Loclatitude = ul.Loclatitude
-	// 		row.Loclongtitude = ul.Loclongtitude
-	// 		return true, nil
-	// 	}
-	// }
 
 	ULM.PositionAddressInfoMap[ul.Usercode] = ul
 
-	return true, nil
+	return nil
 }
 
-func (ULM *ULMap) PositionAddressInfoDelete(ul models.Positionaddressinfo) (bool, error) {
+func (ULM *ULMap) PositionAddressInfoDelete(ul models.Positionaddressinfo) error {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 
 	delete(ULM.PositionAddressInfoMap, ul.Usercode)
 
-	return true, nil
+	return nil
 }

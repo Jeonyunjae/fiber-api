@@ -58,8 +58,14 @@ func (ULL *ULSlice) PositionAddressInfoReads(ul models.PositionaddressDistanceIn
 	var sortData []models.PositionaddressDistanceInfo
 
 	for _, row := range ULL.PositionAddressInfoSlice {
-		distance := util.Distance(ul.Loclongtitude, row.Loclongtitude, ul.Loclatitude, row.Loclatitude)
-		sortData = append(sortData, models.PositionaddressDistanceInfo{Usercode: row.Usercode, Loclatitude: row.Loclatitude, Loclongtitude: row.Loclongtitude, Distance: distance})
+		var data models.PositionaddressDistanceInfo
+		distance := util.GetDistance(ul.Loclongtitude, row.Loclongtitude, ul.Loclatitude, row.Loclatitude)
+
+		data.Usercode = row.Usercode
+		data.Loclongtitude = row.Loclongtitude
+		data.Loclatitude = row.Loclatitude
+		data.Distance = distance
+		sortData = append(sortData, data)
 	}
 	sort.Slice(sortData, func(i, j int) bool {
 		return sortData[i].Distance < sortData[j].Distance
@@ -72,20 +78,41 @@ func (ULL *ULSlice) PositionAddressInfoReads(ul models.PositionaddressDistanceIn
 	return sortData, nil
 }
 
-func (ULL *ULSlice) PositionAddressInfoUpdate(ul models.Positionaddressinfo) (bool, error) {
+func (ULL *ULSlice) PositionAddressInfoReadsRange(ul models.PositionaddressDistanceInfo) ([]models.PositionaddressDistanceInfo, error) {
+	defer log.ElapsedTime(log.TraceFn(), "start")()
+	var sortData []models.PositionaddressDistanceInfo
+
+	for _, row := range ULL.PositionAddressInfoSlice {
+		distance := util.GetDistance(ul.Loclongtitude, row.Loclongtitude, ul.Loclatitude, row.Loclatitude)
+		if distance <= ul.Distance {
+			sortData = append(sortData, models.PositionaddressDistanceInfo{Usercode: row.Usercode, Loclatitude: row.Loclatitude, Loclongtitude: row.Loclongtitude, Distance: distance})
+		}
+	}
+	sort.Slice(sortData, func(i, j int) bool {
+		return sortData[i].Distance < sortData[j].Distance
+	})
+	tempCount := ul.Count
+	if len(sortData) < tempCount {
+		tempCount = len(sortData)
+	}
+	sortData = sortData[:tempCount]
+	return sortData, nil
+}
+
+func (ULL *ULSlice) PositionAddressInfoUpdate(ul models.Positionaddressinfo) error {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 	var row models.Positionaddressinfo
 	for _, row = range ULL.PositionAddressInfoSlice {
 		if row.Usercode == ul.Usercode {
 			row.Loclatitude = ul.Loclatitude
 			row.Loclongtitude = ul.Loclongtitude
-			return true, nil
+			return nil
 		}
 	}
-	return false, nil
+	return log.MyError("NotFound")
 }
 
-func (ULL *ULSlice) PositionAddressInfoDelete(ul models.Positionaddressinfo) (bool, error) {
+func (ULL *ULSlice) PositionAddressInfoDelete(ul models.Positionaddressinfo) error {
 	defer log.ElapsedTime(log.TraceFn(), "start")()
 	var index int
 	var row models.Positionaddressinfo
@@ -96,7 +123,7 @@ func (ULL *ULSlice) PositionAddressInfoDelete(ul models.Positionaddressinfo) (bo
 	}
 
 	ULL.PositionAddressInfoSlice = ULL.sliceDeelte(index)
-	return true, nil
+	return nil
 }
 
 func (ULL *ULSlice) sliceDeelte(index int) []models.Positionaddressinfo {

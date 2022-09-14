@@ -139,8 +139,8 @@ func ServiceRead(PositionAddressInfo models.Positionaddressinfo) error {
 	return nil
 }
 
-// PositionAddressInfo 가까이 있는 정보 가져오기 100개
-func ServiceReads(PositionAddressDistanceInfo models.PositionaddressDistanceInfo) error {
+// PositionAddressInfo 가까이 있는 정보 가져오기 특정 갯수 가져오기
+func ServiceReadsLimit(PositionAddressDistanceInfo models.PositionaddressDistanceInfo) error {
 	// 1.slice
 	result, err := myslice.PositionAddressInfo.PositionAddressInfoReads(PositionAddressDistanceInfo)
 	if err != nil || len(result) < 1 {
@@ -176,32 +176,32 @@ func ServiceReads(PositionAddressDistanceInfo models.PositionaddressDistanceInfo
 
 func ServiceUpdate(PositionAddressInfo models.Positionaddressinfo) error {
 	// 1.slice
-	result, err := myslice.PositionAddressInfo.PositionAddressInfoUpdate(PositionAddressInfo)
-	if err != nil || result == false {
+	err := myslice.PositionAddressInfo.PositionAddressInfoUpdate(PositionAddressInfo)
+	if err != nil {
 		return err
 	}
 
 	// 2.map
-	result, err = mymap.PositionAddressInfo.PositionAddressInfoUpdate(PositionAddressInfo)
-	if err != nil || result == false {
+	err = mymap.PositionAddressInfo.PositionAddressInfoUpdate(PositionAddressInfo)
+	if err != nil {
 		return err
 	}
 
 	// 3.kdtree
-	result, err = mykdtree.PositionAddressInfo.PositionAddressInfoUpdate(PositionAddressInfo)
-	if err != nil || result == false {
+	err = mykdtree.PositionAddressInfo.PositionAddressInfoUpdate(PositionAddressInfo)
+	if err != nil {
 		return err
 	}
 
 	// 4.orm
-	result, err = myorm.PositionAddressInfo.PositionAddressInfoUpdate(PositionAddressInfo)
-	if err != nil || result == false {
+	err = myorm.PositionAddressInfo.PositionAddressInfoUpdate(PositionAddressInfo)
+	if err != nil {
 		return err
 	}
 
 	// 5.query
-	result, err = myquery.PositionAddressInfo.PositionAddressInfoUpdate(PositionAddressInfo)
-	if err != nil || result == false {
+	err = myquery.PositionAddressInfo.PositionAddressInfoUpdate(PositionAddressInfo)
+	if err != nil {
 		return err
 	}
 
@@ -210,32 +210,32 @@ func ServiceUpdate(PositionAddressInfo models.Positionaddressinfo) error {
 
 func ServiceDelete(PositionAddressInfo models.Positionaddressinfo) error {
 	// 1.slice
-	result, err := myslice.PositionAddressInfo.PositionAddressInfoDelete(PositionAddressInfo)
-	if err != nil || result == false {
+	err := myslice.PositionAddressInfo.PositionAddressInfoDelete(PositionAddressInfo)
+	if err != nil {
 		return err
 	}
 
 	// 2.map
-	result, err = mymap.PositionAddressInfo.PositionAddressInfoDelete(PositionAddressInfo)
-	if err != nil || result == false {
+	err = mymap.PositionAddressInfo.PositionAddressInfoDelete(PositionAddressInfo)
+	if err != nil {
 		return err
 	}
 
 	// 3.kdtree
-	result, err = mykdtree.PositionAddressInfo.PositionAddressInfoDelete(PositionAddressInfo)
-	if err != nil || result == false {
+	err = mykdtree.PositionAddressInfo.PositionAddressInfoDelete(PositionAddressInfo)
+	if err != nil {
 		return err
 	}
 
 	// 4.orm
-	result, err = myorm.PositionAddressInfo.PositionAddressInfoDelete(PositionAddressInfo)
-	if err != nil || result == false {
+	err = myorm.PositionAddressInfo.PositionAddressInfoDelete(PositionAddressInfo)
+	if err != nil {
 		return err
 	}
 
 	// 5.query
-	result, err = myquery.PositionAddressInfo.PositionAddressInfoDelete(PositionAddressInfo)
-	if err != nil || result == false {
+	err = myquery.PositionAddressInfo.PositionAddressInfoDelete(PositionAddressInfo)
+	if err != nil {
 		return err
 	}
 

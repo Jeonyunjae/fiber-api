@@ -5,6 +5,7 @@ go 1.18
 require github.com/gofiber/fiber v1.14.6
 
 require (
+	github.com/graphql-go/graphql v0.8.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.12.1 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect

@@ -21,7 +21,9 @@ func PositionAddressInfoInsert(c *fiber.Ctx) error {
 		return c.Status(400).JSON(err.Error())
 	}
 
-	service.ServiceInsert(PositionAddressInfo)
+	if err := service.ServiceInsert(PositionAddressInfo); err != nil {
+		return c.Status(400).JSON(err.Error())
+	}
 
 	responsePositionAddressInfo := CreateResponsePositionAddressInfo(PositionAddressInfo)
 	return c.Status(200).JSON(responsePositionAddressInfo)
@@ -29,28 +31,34 @@ func PositionAddressInfoInsert(c *fiber.Ctx) error {
 
 func PositionAddressInfoReadsLimit(c *fiber.Ctx) error {
 	var PositionaddressDistanceInfo models.PositionaddressDistanceInfo
+	var PositionaddressDistanceInfos []models.PositionaddressDistanceInfo
+	var err error
 
-	if err := c.BodyParser(&PositionaddressDistanceInfo); err != nil {
+	if err = c.BodyParser(&PositionaddressDistanceInfo); err != nil {
 		return c.Status(400).JSON(err.Error())
 	}
 
-	service.ServiceReadsLimit(PositionaddressDistanceInfo)
+	if PositionaddressDistanceInfos, err = service.ServiceReadsLimit(PositionaddressDistanceInfo); err != nil {
+		return c.Status(400).JSON(err.Error())
+	}
 
-	responsePositionAddressDistanceInfo := CreateResponsePositionAddressDistanceInfo(PositionaddressDistanceInfo)
-	return c.Status(200).JSON(responsePositionAddressDistanceInfo)
+	return c.Status(200).JSON(PositionaddressDistanceInfos)
 }
 
 func PositionAddressInfoRead(c *fiber.Ctx) error {
 	var PositionAddressInfo models.Positionaddressinfo
+	var result map[string]models.Positionaddressinfo
+	var err error
 
 	if err := c.BodyParser(&PositionAddressInfo); err != nil {
 		return c.Status(400).JSON(err.Error())
 	}
 
-	service.ServiceRead(PositionAddressInfo)
+	if result, err = service.ServiceRead(PositionAddressInfo); err != nil {
+		return c.Status(400).JSON(err.Error())
+	}
 
-	responsePositionAddressInfo := CreateResponsePositionAddressInfo(PositionAddressInfo)
-	return c.Status(200).JSON(responsePositionAddressInfo)
+	return c.Status(200).JSON(result)
 }
 
 func PositionAddressInfoUpdate(c *fiber.Ctx) error {
@@ -60,7 +68,9 @@ func PositionAddressInfoUpdate(c *fiber.Ctx) error {
 		return c.Status(400).JSON(err.Error())
 	}
 
-	service.ServiceUpdate(PositionAddressInfo)
+	if err := service.ServiceUpdate(PositionAddressInfo); err != nil {
+		return c.Status(400).JSON(err.Error())
+	}
 
 	responsePositionAddressInfo := CreateResponsePositionAddressInfo(PositionAddressInfo)
 	return c.Status(200).JSON(responsePositionAddressInfo)
@@ -73,7 +83,9 @@ func PositionAddressInfoDelete(c *fiber.Ctx) error {
 		return c.Status(400).JSON(err.Error())
 	}
 
-	service.ServiceDelete(PositionAddressInfo)
+	if err := service.ServiceDelete(PositionAddressInfo); err != nil {
+		return c.Status(400).JSON(err.Error())
+	}
 
 	responsePositionAddressInfo := CreateResponsePositionAddressInfo(PositionAddressInfo)
 	return c.Status(200).JSON(responsePositionAddressInfo)

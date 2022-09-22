@@ -104,59 +104,59 @@ func ServiceInsert(PositionAddressInfo models.Positionaddressinfo) error {
 }
 
 //usercode로 정보 가져오기
-func ServiceRead(PositionAddressInfo models.Positionaddressinfo) error {
+func ServiceRead(PositionAddressInfo models.Positionaddressinfo) (map[string]models.Positionaddressinfo, error) {
 
 	// 1.slice
 	result, err := myslice.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
 	if err != nil || len(result) < 1 {
-		return err
+		return nil, err
 	}
 
 	// 2.map
 	result, err = mymap.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
 	if err != nil || len(result) < 1 {
-		return err
+		return nil, err
 	}
 
 	// 3.kdtree
 	result, err = mykdtree.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
 	if err != nil || len(result) < 1 {
-		return err
+		return nil, err
 	}
 
 	// 4.orm
 	result, err = myorm.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
 	if err != nil || len(result) < 1 {
-		return err
+		return nil, err
 	}
 
 	// 5.query
 	result, err = myquery.PositionAddressInfo.PositionAddressInfoRead(PositionAddressInfo)
 	if err != nil || len(result) < 1 {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return result, nil
 }
 
 // PositionAddressInfo 가까이 있는 정보 가져오기 특정 갯수 가져오기
-func ServiceReadsLimit(PositionAddressDistanceInfo models.PositionaddressDistanceInfo) error {
+func ServiceReadsLimit(PositionAddressDistanceInfo models.PositionaddressDistanceInfo) ([]models.PositionaddressDistanceInfo, error) {
 	// 1.slice
 	result, err := myslice.PositionAddressInfo.PositionAddressInfoReads(PositionAddressDistanceInfo)
 	if err != nil || len(result) < 1 {
-		return err
+		return nil, err
 	}
 
 	// 2.map
 	result, err = mymap.PositionAddressInfo.PositionAddressInfoReads(PositionAddressDistanceInfo)
 	if err != nil || len(result) < 1 {
-		return err
+		return nil, err
 	}
 
 	// 3.kdtree
 	result, err = mykdtree.PositionAddressInfo.PositionAddressInfoReads(PositionAddressDistanceInfo)
 	if err != nil || len(result) < 1 {
-		return err
+		return nil, err
 	}
 
 	// // 4.orm
@@ -168,10 +168,10 @@ func ServiceReadsLimit(PositionAddressDistanceInfo models.PositionaddressDistanc
 	// 5.query
 	result, err = myquery.PositionAddressInfo.PositionAddressInfoReads(PositionAddressDistanceInfo)
 	if err != nil || len(result) < 1 {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return result, nil
 }
 
 func ServiceUpdate(PositionAddressInfo models.Positionaddressinfo) error {

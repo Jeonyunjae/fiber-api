@@ -46,6 +46,8 @@ func (ULL *ULSlice) PositionAddressInfoRead(ul models.Positionaddressinfo) (map[
 		if row.Usercode == ul.Usercode {
 			row.Loclatitude = ul.Loclatitude
 			row.Loclongtitude = ul.Loclongtitude
+			row.Name = ul.Name
+			row.Address = ul.Address
 			rows[row.Usercode] = row
 			return rows, nil
 		}
@@ -64,6 +66,8 @@ func (ULL *ULSlice) PositionAddressInfoReads(ul models.PositionaddressDistanceIn
 		data.Usercode = row.Usercode
 		data.Loclongtitude = row.Loclongtitude
 		data.Loclatitude = row.Loclatitude
+		row.Name = ul.Name
+		row.Address = ul.Address
 		data.Distance = distance
 		sortData = append(sortData, data)
 	}
@@ -106,6 +110,8 @@ func (ULL *ULSlice) PositionAddressInfoUpdate(ul models.Positionaddressinfo) err
 		if row.Usercode == ul.Usercode {
 			row.Loclatitude = ul.Loclatitude
 			row.Loclongtitude = ul.Loclongtitude
+			row.Name = ul.Name
+			row.Address = ul.Address
 			return nil
 		}
 	}

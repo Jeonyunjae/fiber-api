@@ -1,6 +1,8 @@
 package mykdtree
 
 import (
+	"fmt"
+
 	"github.com/jeonyunjae/fiber-api/datatype/kdtree"
 	"github.com/jeonyunjae/fiber-api/datatype/kdtree/points"
 	"github.com/jeonyunjae/fiber-api/models"
@@ -24,6 +26,8 @@ func (ULKDT *ULKDTree) PositionAddressInfoInit(rows map[string]models.Positionad
 }
 
 func (ULKDT *ULKDTree) PositionAddressInfoMapToKDTree(rows map[string]models.Positionaddressinfo) ULKDTree {
+	var index int = 0
+
 	for _, row := range rows {
 		var inRes []models.Positionaddressinfo
 		point := ULKDT.PositionAddressInfoKdTree.Find(points.NewPoint(
@@ -36,10 +40,13 @@ func (ULKDT *ULKDTree) PositionAddressInfoMapToKDTree(rows map[string]models.Pos
 			inRes = append(inRes, row)
 
 		}
+
+		fmt.Println("%d::%s", index, row.Name)
 		ULKDT.PositionAddressInfoKdTree.Insert(
 			points.NewPoint(
 				[]float64{row.Loclongtitude, row.Loclatitude}, inRes))
 
+		index++
 	}
 	return *ULKDT
 }

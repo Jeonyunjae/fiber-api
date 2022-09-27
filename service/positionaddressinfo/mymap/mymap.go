@@ -62,6 +62,8 @@ func (ULM *ULMap) PositionAddressInfoReads(ul models.PositionaddressDistanceInfo
 		data.Usercode = row.Usercode
 		data.Loclongtitude = row.Loclongtitude
 		data.Loclatitude = row.Loclatitude
+		data.Address = row.Address
+		data.Name = row.Name
 		data.Distance = distance
 		sortData = append(sortData, data)
 	}
@@ -82,7 +84,7 @@ func (ULM *ULMap) PositionAddressInfoReadsRange(ul models.PositionaddressDistanc
 
 	for _, row := range ULM.PositionAddressInfoMap {
 		distance := util.GetDistance(ul.Loclongtitude, row.Loclongtitude, ul.Loclatitude, row.Loclatitude)
-		sortData = append(sortData, models.PositionaddressDistanceInfo{Usercode: row.Usercode, Loclatitude: row.Loclatitude, Loclongtitude: row.Loclongtitude, Distance: distance})
+		sortData = append(sortData, models.PositionaddressDistanceInfo{Usercode: row.Usercode, Loclatitude: row.Loclatitude, Loclongtitude: row.Loclongtitude, Name: row.Name, Address: row.Address, Distance: distance})
 	}
 	sort.Slice(sortData, func(i, j int) bool {
 		return sortData[i].Distance < sortData[j].Distance

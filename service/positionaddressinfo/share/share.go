@@ -13,6 +13,8 @@ func PositionAddressInfoMapToSlice(rows map[string]models.Positionaddressinfo) [
 		PositionAddressInfo.Usercode = row.Usercode
 		PositionAddressInfo.Loclongtitude = row.Loclongtitude
 		PositionAddressInfo.Loclatitude = row.Loclatitude
+		PositionAddressInfo.Name = row.Name
+		PositionAddressInfo.Address = row.Address
 
 		positionAddressInfo = append(positionAddressInfo, PositionAddressInfo)
 
